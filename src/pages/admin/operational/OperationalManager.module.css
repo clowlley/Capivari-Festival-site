@@ -1,0 +1,123 @@
+.container {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.header { display: flex; justify-content: space-between; align-items: center; }
+.title { font-size: 1.35rem; font-weight: 700; color: #ffffff; margin: 0; letter-spacing: -0.01em; }
+
+.filters {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.searchBox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 8px 12px;
+  flex: 1;
+  max-width: 360px;
+}
+.searchBox input { background: transparent; border: none; color: #ffffff; outline: none; width: 100%; font-family: inherit; font-size: 0.855rem; }
+.searchBox input::placeholder { color: rgba(255, 255, 255, 0.3); }
+
+.selectFilter {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 8px 10px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.82rem;
+  color-scheme: dark;
+}
+
+.tableCard {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.loading { padding: 40px; text-align: center; color: rgba(255, 255, 255, 0.3); font-size: 0.85rem; }
+
+.taskTitle { display: flex; flex-direction: column; gap: 3px; }
+.taskTitle strong { color: #ffffff; font-size: 0.855rem; }
+.description { font-size: 0.78rem; color: rgba(255, 255, 255, 0.35); margin: 0; line-height: 1.4; }
+
+.userCell, .dateCell { display: flex; align-items: center; gap: 6px; font-size: 0.82rem; color: rgba(255, 255, 255, 0.5); }
+.textGreen { color: #6addb4; }
+
+.actions { display: flex; gap: 4px; }
+.actions button {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.3);
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.actions button:hover { color: #7c8fff; border-color: rgba(124, 143, 255, 0.4); background: rgba(124, 143, 255, 0.08); }
+
+.alta  { background: rgba(239, 68, 68, 0.12);  color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3);  border-radius: 20px; padding: 2px 10px; font-size: 0.72rem; font-weight: 600; }
+.media { background: rgba(251, 191, 36, 0.12); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.3); border-radius: 20px; padding: 2px 10px; font-size: 0.72rem; font-weight: 600; }
+.baixa { background: rgba(16, 185, 129, 0.12); color: #6addb4; border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 20px; padding: 2px 10px; font-size: 0.72rem; font-weight: 600; }
+
+.form { display: flex; flex-direction: column; gap: 14px; }
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field label { font-size: 0.75rem; font-weight: 600; color: rgba(255, 255, 255, 0.35); text-align: left; text-transform: uppercase; letter-spacing: 0.05em; }
+
+.inputWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.inputWrap svg { position: absolute; left: 10px; color: rgba(255, 255, 255, 0.3); pointer-events: none; }
+.inputWrap input,
+.inputWrap select,
+.inputWrap textarea { padding-left: 34px !important; }
+.field input, .field select, .field textarea {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: #ffffff;
+  padding: 8px 11px;
+  outline: none;
+  width: 100%;
+  font-family: inherit;
+  font-size: 0.855rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  color-scheme: dark;
+}
+.field input::placeholder, .field textarea::placeholder { color: rgba(255, 255, 255, 0.3); }
+.field input:focus, .field select:focus, .field textarea:focus {
+  border-color: #b44fff;
+  box-shadow: 0 0 0 3px rgba(180, 79, 255, 0.12);
+}
+.field textarea { resize: vertical; min-height: 70px; }
+.formGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 640px) {
+  .tableCard { background: transparent; border: none; border-radius: 0; overflow: visible; }
+}

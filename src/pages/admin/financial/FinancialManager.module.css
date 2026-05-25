@@ -1,0 +1,338 @@
+@property --ba {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+@keyframes borderSpin { to { --ba: 360deg; } }
+
+.container {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+}
+
+.statCard {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.clickableCard { cursor: pointer; transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s; }
+.clickableCard:hover { box-shadow: 0 4px 24px rgba(0,0,0,0.4), 0 0 20px rgba(180,79,255,0.08); border-color: rgba(180,79,255,0.2); transform: translateY(-1px); }
+
+.statLabel { font-size: 0.72rem; font-weight: 600; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.06em; margin: 0; }
+.statValue { font-size: 1.3rem; font-weight: 700; color: #ffffff; margin: 3px 0 0; }
+.statValueClickable { font-size: 1.3rem; font-weight: 700; color: #ffffff; margin: 3px 0 0; transition: color 0.15s; }
+.clickableCard:hover .statValueClickable { color: #b44fff; }
+
+.actionBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.searchBox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 8px 12px;
+  flex: 1;
+  max-width: 360px;
+}
+.searchBox input {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  outline: none;
+  width: 100%;
+  font-family: inherit;
+  font-size: 0.855rem;
+}
+
+.actions { display: flex; gap: 8px; align-items: center; }
+
+.selectFilter {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 8px 10px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.82rem;
+  color-scheme: dark;
+}
+
+.btnAdd {
+  background: linear-gradient(135deg, #b44fff 0%, #ff4fa3 100%);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.btnAdd:hover { opacity: 0.88; }
+
+.tableCard {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.table { width: 100%; border-collapse: collapse; }
+
+.table th {
+  text-align: left;
+  padding: 11px 14px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.08);
+}
+
+.table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 0.855rem;
+  color: rgba(255, 255, 255, 0.72);
+  vertical-align: middle;
+  text-align: left;
+}
+.table tr:last-child td { border-bottom: none; }
+.table tbody tr:hover td { background: rgba(255, 255, 255, 0.04); }
+
+.rowIn  { }
+.rowOut { }
+
+.tag {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.5);
+  padding: 3px 10px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.amount { font-weight: 600; }
+.amountClickable { font-weight: 600; color: #b44fff; cursor: pointer; transition: color 0.15s; }
+.amountClickable:hover { color: #d48fff; text-decoration: underline; }
+
+.textGreen  { color: #6addb4; font-weight: 600; }
+.textRed    { color: #f87171; font-weight: 600; }
+.textGold   { color: #b44fff; }
+.textOrange { color: #fbbf24; }
+
+.status {
+  padding: 3px 10px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border-radius: 20px;
+  border: 1px solid transparent;
+}
+.pendente  { background: rgba(251,191,36,0.12);  color: #fbbf24; border-color: rgba(251,191,36,0.3); }
+.pago      { background: rgba(16,185,129,0.12);  color: #6addb4; border-color: rgba(16,185,129,0.3); }
+.cancelado { background: rgba(239,68,68,0.12);   color: #f87171; border-color: rgba(239,68,68,0.3); }
+
+.tdActions { display: flex; gap: 4px; }
+.tdActions button {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.3);
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.tdActions button:hover { color: #7c8fff; border-color: rgba(124,143,255,0.4); background: rgba(124,143,255,0.08); }
+.btnHasComment { color: #7c8fff !important; border-color: rgba(124,143,255,0.4) !important; background: rgba(124,143,255,0.08) !important; }
+
+/* ─── Modal ─── */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.modal {
+  background: rgba(13, 12, 26, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 24px;
+  width: 100%;
+  max-width: 760px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  animation: cardFadeUp 0.25s ease-out;
+  overflow: hidden;
+}
+.modal::before { display: none; }
+
+.modalSmall {
+  background: rgba(13, 12, 26, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+  width: 90%;
+  max-width: 480px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  animation: cardFadeUp 0.25s ease-out;
+}
+
+.modalHelp { font-size: 0.82rem; color: rgba(255, 255, 255, 0.45); margin-bottom: 1.2rem; line-height: 1.5; }
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  padding-bottom: 14px;
+}
+.modalHeader h2 { font-size: 0.95rem; font-weight: 600; color: #ffffff; margin: 0; text-align: left; }
+.modalHeader button {
+  --ba: 0deg;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: rgba(255, 255, 255, 0.55);
+  cursor: pointer;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-family: inherit;
+  padding: 7px 18px;
+  background: linear-gradient(#08080f, #08080f) padding-box,
+    conic-gradient(from var(--ba), #ff0080, #ff00ff, #8000ff, #0080ff, #00ffff, #00ff80, #ffff00, #ff8000, #ff0080) border-box;
+  border: 1.5px solid transparent;
+  border-radius: 100px;
+  animation: borderSpin 3s linear infinite;
+  transition: color 0.2s;
+}
+.modalHeader button:hover { color: #f87171; }
+
+.financeForm { display: flex; flex-direction: column; gap: 1rem; }
+
+.inputWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.inputWrap svg { position: absolute; left: 10px; color: rgba(255, 255, 255, 0.3); pointer-events: none; }
+.inputWrap input,
+.inputWrap select,
+.inputWrap textarea { padding-left: 34px !important; }
+
+.field label { display: block; color: rgba(255, 255, 255, 0.35); font-size: 0.75rem; font-weight: 600; margin-bottom: 4px; text-align: left; text-transform: uppercase; letter-spacing: 0.05em; }
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: #ffffff;
+  padding: 8px 11px;
+  outline: none;
+  font-family: inherit;
+  font-size: 0.855rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.field input::placeholder, .field textarea::placeholder { color: rgba(255, 255, 255, 0.3); }
+.field input:focus, .field select:focus, .field textarea:focus {
+  border-color: #b44fff;
+  box-shadow: 0 0 0 3px rgba(180, 79, 255, 0.12);
+}
+
+.commentWrap { display: flex; flex-direction: column; gap: 1rem; }
+.commentHistory label { display: block; color: rgba(255, 255, 255, 0.35); font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+.notesArea {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 10px 12px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.82rem;
+  max-height: 180px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  line-height: 1.5;
+}
+
+.btnConfirm {
+  background: linear-gradient(135deg, #b44fff 0%, #ff4fa3 100%);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 9px;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: opacity 0.15s;
+}
+.btnConfirm:hover { opacity: 0.88; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes cardFadeUp {
+  from { opacity: 0; transform: translateY(10px) scale(0.99); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 640px) {
+  .tableCard { background: transparent; border: none; border-radius: 0; overflow: visible; }
+  .table thead { display: none; }
+  .table tbody tr { display: block; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
+  .table td { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.05); gap: 10px; text-align: right; }
+  .table td:last-child { border-bottom: none; }
+  .table td::before { font-size: 0.65rem; font-weight: 700; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; flex-shrink: 0; text-align: left; }
+  .table td:nth-child(1)::before { content: 'Data'; }
+  .table td:nth-child(2)::before { content: 'Descrição'; }
+  .table td:nth-child(3)::before { content: 'Categoria'; }
+  .table td:nth-child(4)::before { content: 'Valor'; }
+  .table td:nth-child(5)::before { content: 'Status'; }
+  .table td:nth-child(6)::before { content: 'Ações'; }
+  .tdActions { justify-content: flex-end; }
+}

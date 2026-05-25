@@ -1,0 +1,73 @@
+.form {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form::before { display: none; }
+
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+
+.field { display: flex; flex-direction: column; gap: 5px; }
+
+.field label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.field input,
+.field textarea,
+.field select {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 0.855rem;
+  padding: 8px 11px;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.field input::placeholder,
+.field textarea::placeholder { color: rgba(255, 255, 255, 0.3); }
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus {
+  border-color: #b44fff;
+  box-shadow: 0 0 0 3px rgba(180, 79, 255, 0.12);
+}
+
+.field textarea { resize: vertical; min-height: 80px; font-family: inherit; }
+.field select option { background: #0d0c1a; color: #ffffff; }
+
+.checkboxField {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.855rem;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+}
+.checkboxField input[type='checkbox'] { width: 16px; height: 16px; accent-color: #b44fff; }
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 4px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.helpText { font-size: 0.72rem; color: rgba(255, 255, 255, 0.3); margin-top: 3px; }

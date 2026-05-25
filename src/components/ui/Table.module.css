@@ -1,0 +1,74 @@
+.tableContainer {
+  width: 100%;
+  overflow-x: auto;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.table th {
+  padding: 11px 14px;
+  background: transparent;
+  font-weight: 700;
+  font-size: 0.72rem;
+  font-family: inherit;
+  color: rgba(255, 255, 255, 0.35);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.08);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 12px 14px;
+  font-size: 0.855rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  vertical-align: middle;
+  color: rgba(255, 255, 255, 0.72);
+  text-align: left;
+}
+
+.table tr:last-child td { border-bottom: none; }
+.table tbody tr { transition: background 0.1s; }
+.table tbody tr:hover td { background: rgba(255, 255, 255, 0.04); }
+
+@media (max-width: 640px) {
+  .tableContainer { background: transparent; border: none; border-radius: 0; overflow: visible; }
+  .table thead { display: none; }
+  .table tbody tr {
+    display: block;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    gap: 10px;
+    text-align: right;
+  }
+  .table td:last-child { border-bottom: none; }
+  .table td[data-label]::before {
+    content: attr(data-label);
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.35);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    flex-shrink: 0;
+    text-align: left;
+  }
+}

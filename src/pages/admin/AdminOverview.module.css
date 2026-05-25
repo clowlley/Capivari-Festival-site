@@ -1,0 +1,115 @@
+.overview {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.sectionLabel {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  margin-top: 0.75rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  padding: 1.4rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
+}
+
+.card:hover {
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), 0 0 20px rgba(180, 79, 255, 0.08);
+  border-color: rgba(180, 79, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.card::before { display: none; }
+
+.icon {
+  color: #7c8fff;
+  margin-bottom: 1rem;
+  background: rgba(124, 143, 255, 0.1);
+  padding: 8px;
+  border-radius: 8px;
+  display: flex;
+  transition: background 0.2s;
+}
+
+.card:hover .icon { background: rgba(124, 143, 255, 0.18); }
+
+.cardGreen  .icon { color: #6addb4; background: rgba(106, 221, 180, 0.1); }
+.cardGreen:hover .icon  { background: rgba(106, 221, 180, 0.18); }
+.cardRed    .icon { color: #f87171; background: rgba(248, 113, 113, 0.1); }
+.cardRed:hover .icon    { background: rgba(248, 113, 113, 0.18); }
+.cardOrange .icon { color: #fbbf24; background: rgba(251, 191, 36, 0.1); }
+.cardOrange:hover .icon { background: rgba(251, 191, 36, 0.18); }
+
+.cardTitle {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.35);
+  margin: 0 0 0.4rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.count {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  word-break: break-all;
+}
+
+.countGreen  { color: #6addb4; }
+.countRed    { color: #f87171; }
+.countOrange { color: #fbbf24; }
+
+.description {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.3);
+  margin: 0.3rem 0 0;
+  line-height: 1.4;
+}
+
+.progressContainer {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  margin: 0.8rem 0 0.2rem;
+  overflow: hidden;
+}
+
+.progressBar {
+  height: 100%;
+  background: linear-gradient(90deg, #b44fff, #7c8fff);
+  border-radius: 2px;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (max-width: 768px) {
+  .grid { grid-template-columns: 1fr 1fr; }
+  .count { font-size: 1.4rem; }
+}
+
+@media (max-width: 480px) {
+  .grid { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,56 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: inherit;
+  letter-spacing: 0;
+  text-transform: none;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  gap: 6px;
+  line-height: 1.25;
+  outline: none;
+  transition: background 0.15s, box-shadow 0.15s, border-color 0.15s, color 0.15s, opacity 0.15s;
+}
+
+.button:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.primary {
+  background: linear-gradient(135deg, #b44fff 0%, #ff4fa3 100%);
+  color: #ffffff;
+  border-color: transparent;
+}
+.primary:hover:not(:disabled) { opacity: 0.88; }
+.primary:active:not(:disabled) { opacity: 0.75; }
+
+.secondary {
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.6);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+.secondary:hover:not(:disabled) { background: rgba(255, 255, 255, 0.07); border-color: rgba(255, 255, 255, 0.15); color: #ffffff; }
+
+.danger {
+  background: transparent;
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+.danger:hover:not(:disabled) { background: rgba(239, 68, 68, 0.08); border-color: rgba(239, 68, 68, 0.5); }
+
+.success {
+  background: transparent;
+  color: #6addb4;
+  border-color: rgba(16, 185, 129, 0.3);
+}
+.success:hover:not(:disabled) { background: rgba(16, 185, 129, 0.08); border-color: rgba(16, 185, 129, 0.5); }
+
+.outline {
+  background: transparent;
+  border-color: #b44fff;
+  color: #b44fff;
+}
+.outline:hover:not(:disabled) { background: rgba(180, 79, 255, 0.08); }

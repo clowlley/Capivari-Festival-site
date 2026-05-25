@@ -1,0 +1,12 @@
+.wrapper {
+  padding: 32px;
+  flex: 1;
+  width: 100%;
+  background: transparent;
+  border-left: 1px solid rgba(255, 255, 255, 0.04);
+  overflow-y: auto;
+}
+
+@media (max-width: 900px) {
+  .wrapper { padding: 20px; border-left: none; }
+}

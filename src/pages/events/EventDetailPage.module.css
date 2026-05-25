@@ -1,0 +1,421 @@
+/* ──────────────────────────────────────────────────────────
+   EventDetailPage — estilo Home (capivari2)
+────────────────────────────────────────────────────────── */
+
+@property --ba {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes borderSpin { to { --ba: 360deg; } }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Page wrapper ─────────────────────────────────────── */
+.page {
+  background: #08080f;
+  min-height: 100vh;
+}
+
+/* ── Loading / Not found ─────────────────────────────── */
+.center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  text-align: center;
+  gap: 16px;
+  color: rgba(255, 255, 255, 0.45);
+  font-family: 'Inter', sans-serif;
+  padding: 48px;
+}
+
+/* ── Hero ─────────────────────────────────────────────── */
+.hero {
+  position: relative;
+  min-height: 72vh;
+  overflow: hidden;
+}
+
+.heroBg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.heroImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  filter: brightness(0.55) saturate(0.8);
+}
+
+/* Multi-layer overlay */
+.heroOverlay {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at center, transparent 20%, rgba(0,0,0,0.55) 100%),
+    linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, transparent 30%);
+}
+
+/* Fade suave na base da imagem */
+.heroFadeBottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 260px;
+  background: linear-gradient(to bottom, transparent 0%, #08080f 100%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Atmospheric glow */
+.heroGlow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background:
+    radial-gradient(ellipse 55% 45% at 50% 95%, rgba(108,127,255,0.14) 0%, transparent 65%),
+    radial-gradient(ellipse 35% 35% at 20% 30%, rgba(255,79,163,0.08) 0%, transparent 55%),
+    radial-gradient(ellipse 30% 30% at 80% 25%, rgba(180,79,255,0.08) 0%, transparent 55%);
+}
+
+/* heroInner ocupa toda a altura do hero */
+.heroInner {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  min-height: 72vh;
+  padding: 36px clamp(24px, 5vw, 56px) 56px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  animation: fadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* TOP — back + breadcrumbs + badges */
+.heroTop {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* BOTTOM — título+chips esquerda | price card direita */
+.heroBottom {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.heroBottomLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── Price card — só borda RGB ────────────────────────── */
+.priceCard {
+  --ba: 0deg;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 22px;
+  border-radius: 14px;
+  background:
+    linear-gradient(rgba(8,8,15,0.82), rgba(8,8,15,0.82)) padding-box,
+    conic-gradient(from var(--ba), #ff0080, #ff00ff, #8000ff, #0080ff, #00ffff, #00ff80, #ffff00, #ff8000, #ff0080) border-box;
+  border: 1.5px solid transparent;
+  animation: borderSpin 3s linear infinite;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: rgba(255,255,255,0.65);
+}
+
+.priceCardValue {
+  font-size: 1.1rem;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: -0.01em;
+  background: linear-gradient(90deg, #ffffff 0%, #d4a8ff 60%, #b44fff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  white-space: nowrap;
+}
+
+/* ── Back + Breadcrumbs ───────────────────────────────── */
+.topRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: rgba(255, 255, 255, 0.38);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  font-family: 'Inter', sans-serif;
+  transition: color 0.2s;
+}
+.back:hover { color: #b44fff; }
+
+.sep { opacity: 0.25; font-size: 0.68rem; color: rgba(255,255,255,0.4); }
+
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.28);
+  font-family: 'Inter', sans-serif;
+}
+.breadcrumbs a { color: inherit; text-decoration: none; transition: color 0.2s; }
+.breadcrumbs a:hover { color: rgba(255,255,255,0.58); }
+.current {
+  font-weight: 700;
+  background: linear-gradient(90deg, #ffffff 0%, #00ff88 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Badges ───────────────────────────────────────────── */
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.badge,
+.badge2,
+.badgeFeat {
+  --ba: 0deg;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 13px;
+  background:
+    linear-gradient(rgba(8,8,15,0.82), rgba(8,8,15,0.82)) padding-box,
+    conic-gradient(from var(--ba), #ff0080, #ff00ff, #8000ff, #0080ff, #00ffff, #00ff80, #ffff00, #ff8000, #ff0080) border-box;
+  border: 1px solid transparent;
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 100px;
+  font-family: 'Inter', sans-serif;
+  animation: borderSpin 5s linear infinite;
+}
+
+.badge2 { animation-delay: -1.7s; font-weight: 600; letter-spacing: 0.08em; }
+.badgeFeat { animation-delay: -3.3s; }
+
+/* texto dos badges — branco simples */
+.badgeText {
+  color: rgba(255,255,255,0.88);
+  -webkit-text-fill-color: rgba(255,255,255,0.88);
+}
+
+/* ── Hero title — direita ─────────────────────────────── */
+.heroTitle {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(2.2rem, 5.5vw, 4.8rem);
+  font-weight: 700;
+  line-height: 1.0;
+  letter-spacing: -0.03em;
+  margin: 0;
+  text-align: left;
+  background: linear-gradient(90deg, #ffffff 0%, #e2e2ff 45%, #b44fff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  max-width: 940px;
+}
+
+/* ── Meta chips ───────────────────────────────────────── */
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-start;
+}
+
+.metaItem {
+  --ba: 0deg;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  background:
+    linear-gradient(rgba(4,4,10,0.93), rgba(4,4,10,0.93)) padding-box,
+    conic-gradient(from var(--ba), #ff0080, #ff00ff, #8000ff, #0080ff, #00ffff, #00ff80, #ffff00, #ff8000, #ff0080) border-box;
+  border: 1px solid transparent;
+  color: rgba(255,255,255,0.78);
+  font-size: 0.84rem;
+  font-family: 'Inter', sans-serif;
+  border-radius: 12px;
+  white-space: nowrap;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  animation: borderSpin 4s linear infinite;
+}
+
+.metaItem:nth-child(2) { animation-delay: -1.3s; }
+.metaItem:nth-child(3) { animation-delay: -2.6s; }
+
+/* ── Content section ──────────────────────────────────── */
+.contentWrap {
+  background: #08080f;
+  padding: 72px 0 96px;
+  position: relative;
+}
+
+.contentWrap::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 700px;
+  height: 440px;
+  background: radial-gradient(ellipse, rgba(180,79,255,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.contentInner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 clamp(20px, 4vw, 56px);
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Description ──────────────────────────────────────── */
+.desc {
+  font-family: 'Inter', sans-serif;
+  color: rgba(255,255,255,0.68);
+  font-size: 1.05rem;
+  line-height: 1.9;
+  max-width: 780px;
+  margin: 0 auto;
+  text-align: justify;
+}
+
+/* ── Full content block ───────────────────────────────── */
+.fullContent {
+  background: rgba(255,255,255,0.018);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  padding: 32px 36px;
+  position: relative;
+  overflow: hidden;
+}
+
+.fullContent::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 120px; height: 1px;
+  background: linear-gradient(90deg, #b44fff, transparent);
+}
+
+.fullContent::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 1px; height: 80px;
+  background: linear-gradient(180deg, #b44fff, transparent);
+}
+
+.sectionTitle {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(180,79,255,0.72);
+  margin: 0 0 16px;
+}
+
+.fullText {
+  font-family: 'Inter', sans-serif;
+  color: rgba(255,255,255,0.62);
+  line-height: 1.9;
+  font-size: 0.96rem;
+  white-space: pre-wrap;
+  margin: 0;
+}
+
+/* ── CTA ──────────────────────────────────────────────── */
+.ctaRow {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.cta {
+  --ba: 0deg;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background:
+    linear-gradient(#08080f, #08080f) padding-box,
+    conic-gradient(from var(--ba), #ff0080, #ff00ff, #8000ff, #0080ff, #00ffff, #00ff80, #ffff00, #ff8000, #ff0080) border-box;
+  color: #ffffff;
+  padding: 15px 40px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  border: 2px solid transparent;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-family: 'Inter', sans-serif;
+  animation: borderSpin 3s linear infinite;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 40px rgba(180,79,255,0.30);
+}
+
+/* ── Responsive ───────────────────────────────────────── */
+@media (max-width: 768px) {
+  .hero { min-height: 60vh; }
+  .heroInner { padding: 32px 20px 44px; min-height: 60vh; }
+  .heroTitle { font-size: clamp(1.9rem, 8vw, 2.8rem); }
+  .heroBottom { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .priceCard { width: 100%; }
+  .contentInner { padding: 0 20px; }
+  .fullContent { padding: 24px 20px; }
+  .contentWrap { padding: 48px 0 64px; }
+}

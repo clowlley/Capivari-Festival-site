@@ -1,0 +1,150 @@
+@property --ba {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes borderSpin {
+  to { --ba: 360deg; }
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.modal {
+  background: rgba(13, 12, 26, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 760px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  animation: modalEnter 0.25s ease-out;
+  overflow: hidden;
+}
+
+.modal::before { display: none; }
+
+@keyframes modalEnter {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.header {
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: 0;
+  text-shadow: none;
+  text-align: left;
+}
+
+.closeBtn {
+  --ba: 0deg;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: rgba(255, 255, 255, 0.55);
+  cursor: pointer;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-family: inherit;
+  padding: 7px 18px;
+  background: linear-gradient(#08080f, #08080f) padding-box,
+    conic-gradient(from var(--ba), #ff0080, #ff00ff, #8000ff, #0080ff, #00ffff, #00ff80, #ffff00, #ff8000, #ff0080) border-box;
+  border: 1.5px solid transparent;
+  border-radius: 100px;
+  animation: borderSpin 3s linear infinite;
+  transition: color 0.2s;
+}
+.closeBtn:hover { color: #f87171; }
+
+.body {
+  padding: 22px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.6;
+}
+
+/* ── shared form styles usado em modais ── */
+.field { display: flex; flex-direction: column; gap: 5px; }
+
+.field label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.35);
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.inputWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.inputWrap svg {
+  position: absolute;
+  left: 10px;
+  color: rgba(255, 255, 255, 0.3);
+  pointer-events: none;
+}
+.inputWrap input,
+.inputWrap select,
+.inputWrap textarea { padding-left: 34px !important; }
+
+.field input,
+.field select,
+.field textarea,
+.inputWrap input,
+.inputWrap select,
+.inputWrap textarea {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: #ffffff;
+  padding: 8px 11px;
+  outline: none;
+  width: 100%;
+  font-family: inherit;
+  font-size: 0.855rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.field input::placeholder,
+.field textarea::placeholder,
+.inputWrap input::placeholder,
+.inputWrap textarea::placeholder { color: rgba(255, 255, 255, 0.3); }
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus,
+.inputWrap input:focus,
+.inputWrap select:focus,
+.inputWrap textarea:focus {
+  border-color: #b44fff;
+  box-shadow: 0 0 0 3px rgba(180, 79, 255, 0.12);
+}
