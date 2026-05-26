@@ -84,7 +84,7 @@ const EventDetailPage: FC = () => {
 
           <div className={styles.heroInner}>
 
-            {/* TOP — navegação + badges */}
+            {/* TOP — navegação */}
             <div className={styles.heroTop}>
               <div className={styles.topRow}>
                 <Link to="/eventos" className={styles.back}>
@@ -97,24 +97,6 @@ const EventDetailPage: FC = () => {
                   <span className={styles.sep}>/</span>
                   <span className={styles.current}>{event.title}</span>
                 </div>
-              </div>
-              <div className={styles.badges}>
-                {event.category && (
-                  <span className={styles.badge}>
-                    <span className={styles.badgeText}>{event.category}</span>
-                  </span>
-                )}
-                {event.event_type && (
-                  <span className={styles.badge2}>
-                    <span className={styles.badgeText}>{event.event_type}</span>
-                  </span>
-                )}
-                {event.featured && (
-                  <span className={styles.badgeFeat}>
-                    <Star size={12} fill="#00ff88" color="#00ff88" />
-                    <span className={styles.badgeText}>Destaque</span>
-                  </span>
-                )}
               </div>
             </div>
 
@@ -131,6 +113,24 @@ const EventDetailPage: FC = () => {
                   )}
                   {event.location_name && (
                     <span className={styles.metaItem}><MapPin size={15} /> {event.location_name}</span>
+                  )}
+                </div>
+                <div className={styles.badges}>
+                  {event.category && (
+                    <span className={styles.badge}>
+                      <span className={styles.badgeText}>{event.category}</span>
+                    </span>
+                  )}
+                  {event.event_type && (
+                    <span className={styles.badge2}>
+                      <span className={styles.badgeText}>{event.event_type}</span>
+                    </span>
+                  )}
+                  {event.featured && (
+                    <span className={styles.badgeFeat}>
+                      <Star size={12} fill="#00ff88" color="#00ff88" />
+                      <span className={styles.badgeText}>Destaque</span>
+                    </span>
                   )}
                 </div>
               </div>
