@@ -248,6 +248,7 @@ const GalleryInfinity: React.FC = () => {
       let done = 0;
       urls.forEach((url, i) => {
         const img = new Image();
+        img.crossOrigin = 'anonymous';
         const obj: Record<string, unknown> = { loaded: false, img: null, width: 0, height: 0, ratio: 0, bandIndex: bi, imageIndex: i };
         imgs.push(obj);
         img.onload = () => {
