@@ -67,7 +67,7 @@ const Hero: React.FC = () => {
       <div className={styles.heroLeft}>
         <div className={styles.heroBadge}>
           <span className={styles.heroBadgeDot} />
-          Temporada 2025
+          Temporada 2026
         </div>
 
         <h1 className={styles.heroTitle}>
