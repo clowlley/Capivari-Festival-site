@@ -386,6 +386,65 @@
 .videoThumb:hover .videoOverlay { background: rgba(0, 0, 0, 0.15); }
 .videoThumb:hover .videoOverlay svg { transform: scale(1.15); }
 
+/* ── Playlist (Set) ── */
+.playlist {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.playlistItem {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 14px 18px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(180, 79, 255, 0.12);
+  border-radius: 10px;
+  transition: background 0.2s, border-color 0.2s;
+}
+.playlistItem:hover {
+  background: rgba(180, 79, 255, 0.06);
+  border-color: rgba(180, 79, 255, 0.3);
+}
+.playlistIndex {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: rgba(180, 79, 255, 0.7);
+  width: 32px;
+  flex-shrink: 0;
+  text-align: center;
+}
+.playlistInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.playlistTitle {
+  font-size: 0.96rem;
+  font-weight: 600;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.playlistAudio {
+  height: 36px;
+  max-width: 360px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 720px) {
+  .playlistItem {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .playlistAudio { max-width: 100%; width: 100%; }
+}
+
 .photoThumb {
   aspect-ratio: 3/4;
   border-radius: 10px;

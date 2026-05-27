@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Plus } from 'lucide-react';
-import type { Artist, ArtistPhoto, ArtistVideo } from '@/types/artist.types';
+import type { Artist, ArtistPhoto, ArtistVideo, ArtistTrack } from '@/types/artist.types';
 import { artistsService } from '@/services/artists.service';
 import { useToast } from '@/hooks/useToast';
 import { Button } from '@/components/ui/Button';
@@ -14,12 +14,14 @@ interface Props {
 
 const MAX_PHOTOS = 10;
 const MAX_VIDEOS = 10;
+const MAX_TRACKS = 20;
 
 const ArtistForm: React.FC<Props> = ({ artist, onSuccess, onCancel }) => {
   const isEdit = !!artist;
   const toast = useToast();
   const photoInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
+  const trackInputRef = useRef<HTMLInputElement>(null);
 
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -40,6 +42,8 @@ const ArtistForm: React.FC<Props> = ({ artist, onSuccess, onCancel }) => {
   const [existingPhotos, setExistingPhotos] = useState<ArtistPhoto[]>([]);
   const [newVideoFiles, setNewVideoFiles] = useState<File[]>([]);
   const [existingVideos, setExistingVideos] = useState<ArtistVideo[]>([]);
+  const [newTrackFiles, setNewTrackFiles] = useState<File[]>([]);
+  const [existingTracks, setExistingTracks] = useState<ArtistTrack[]>([]);
 
   useEffect(() => {
     if (artist) {
@@ -57,6 +61,7 @@ const ArtistForm: React.FC<Props> = ({ artist, onSuccess, onCancel }) => {
       });
       setExistingPhotos(artist.photos || []);
       setExistingVideos(artist.videos || []);
+      setExistingTracks(artist.tracks || []);
     }
   }, [artist]);
 
@@ -107,6 +112,27 @@ const ArtistForm: React.FC<Props> = ({ artist, onSuccess, onCancel }) => {
     }
   };
 
+  const handleTrackSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    const remaining = MAX_TRACKS - existingTracks.length - newTrackFiles.length;
+    setNewTrackFiles(prev => [...prev, ...files].slice(0, prev.length + remaining));
+    e.target.value = '';
+  };
+
+  const removeNewTrack = (index: number) => {
+    setNewTrackFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleDeleteExistingTrack = async (track: ArtistTrack) => {
+    if (!confirm('Remover esta música?')) return;
+    try {
+      await artistsService.deleteTrack(track.id);
+      setExistingTracks(prev => prev.filter(t => t.id !== track.id));
+    } catch {
+      toast.error('Erro ao remover música.');
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -117,6 +143,7 @@ const ArtistForm: React.FC<Props> = ({ artist, onSuccess, onCancel }) => {
       if (profileFile) data.append('profile_image_file', profileFile);
       newPhotoFiles.forEach(f => data.append('photo_files', f));
       newVideoFiles.forEach(f => data.append('video_files', f));
+      newTrackFiles.forEach(f => data.append('track_files', f));
 
       if (isEdit && artist?.id) {
         await artistsService.updateArtist(artist.id, data);
@@ -138,6 +165,8 @@ const ArtistForm: React.FC<Props> = ({ artist, onSuccess, onCancel }) => {
   const canAddMore = totalPhotos < MAX_PHOTOS;
   const totalVideos = existingVideos.length + newVideoFiles.length;
   const canAddMoreVideos = totalVideos < MAX_VIDEOS;
+  const totalTracks = existingTracks.length + newTrackFiles.length;
+  const canAddMoreTracks = totalTracks < MAX_TRACKS;
 
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
@@ -281,6 +310,48 @@ const ArtistForm: React.FC<Props> = ({ artist, onSuccess, onCancel }) => {
           multiple
           style={{ display: 'none' }}
           onChange={handleVideoSelect}
+        />
+      </div>
+
+      <div className={styles.field}>
+        <label>Músicas / Set <span className={styles.hint}>(máximo {MAX_TRACKS} — MP3, WAV, M4A, OGG)</span></label>
+        <div className={styles.trackList}>
+          {existingTracks.map(t => (
+            <div key={t.id} className={styles.trackItem}>
+              <audio src={t.audio_url} controls preload="metadata" />
+              <div className={styles.trackInfo}>
+                <span className={styles.trackTitle}>{t.title || 'Sem título'}</span>
+              </div>
+              <button type="button" className={styles.trackRemove} onClick={() => handleDeleteExistingTrack(t)}>
+                <X size={14} />
+              </button>
+            </div>
+          ))}
+          {newTrackFiles.map((f, i) => (
+            <div key={`newt-${i}`} className={styles.trackItem}>
+              <audio src={URL.createObjectURL(f)} controls preload="metadata" />
+              <div className={styles.trackInfo}>
+                <span className={styles.trackTitle}>{f.name.replace(/\.[^.]+$/, '')}</span>
+                <span className={styles.trackNew}>NOVA</span>
+              </div>
+              <button type="button" className={styles.trackRemove} onClick={() => removeNewTrack(i)}>
+                <X size={14} />
+              </button>
+            </div>
+          ))}
+          {canAddMoreTracks && (
+            <button type="button" className={styles.trackAdd} onClick={() => trackInputRef.current?.click()}>
+              <Plus size={16} /> Adicionar música ({MAX_TRACKS - totalTracks} restante{MAX_TRACKS - totalTracks !== 1 ? 's' : ''})
+            </button>
+          )}
+        </div>
+        <input
+          ref={trackInputRef}
+          type="file"
+          accept="audio/mpeg,audio/mp3,audio/wav,audio/x-wav,audio/mp4,audio/x-m4a,audio/ogg,audio/aac"
+          multiple
+          style={{ display: 'none' }}
+          onChange={handleTrackSelect}
         />
       </div>
 

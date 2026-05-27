@@ -10,6 +10,13 @@ export interface ArtistVideo {
   video_url: string;
 }
 
+export interface ArtistTrack {
+  id: number;
+  artist_id?: number;
+  audio_url: string;
+  title?: string;
+}
+
 export interface Artist {
   id: number;
   name: string;
@@ -25,6 +32,7 @@ export interface Artist {
   featured: boolean;
   photos: ArtistPhoto[];
   videos?: ArtistVideo[];
+  tracks?: ArtistTrack[];
   created_at?: string;
   updated_at?: string;
 }

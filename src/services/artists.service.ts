@@ -33,4 +33,8 @@ export const artistsService = {
   async deleteVideo(videoId: number): Promise<void> {
     await api.delete(`/artists/admin/videos/${videoId}`);
   },
+
+  async deleteTrack(trackId: number): Promise<void> {
+    await api.delete(`/artists/admin/tracks/${trackId}`);
+  },
 };

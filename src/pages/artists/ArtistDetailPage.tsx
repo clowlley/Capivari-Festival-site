@@ -1,6 +1,6 @@
 import { useState, useEffect, type FC } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, ExternalLink, Clock, User, Music2, Image as ImageIcon, Video as VideoIcon, Play, FileText } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Clock, User, Music2, Image as ImageIcon, Video as VideoIcon, Play, FileText, ListMusic } from 'lucide-react';
 import { artistsService } from '@/services/artists.service';
 import type { Artist } from '@/types/artist.types';
 import PublicLayout from '@/components/layout/PublicLayout';
@@ -14,7 +14,7 @@ const ArtistDetailPage: FC = () => {
   const [loading, setLoading] = useState(true);
   const [lightbox, setLightbox] = useState<string | null>(null);
   const [videoLightbox, setVideoLightbox] = useState<string | null>(null);
-  const [tab, setTab] = useState<'biography' | 'photos' | 'videos'>('biography');
+  const [tab, setTab] = useState<'biography' | 'photos' | 'videos' | 'set'>('biography');
 
   useEffect(() => {
     if (!id) return;
@@ -151,6 +151,16 @@ const ArtistDetailPage: FC = () => {
                 <span className={styles.mediaTabCount}>{artist.videos.length}</span>
               )}
             </button>
+            <button
+              className={`${styles.mediaTab} ${tab === 'set' ? styles.mediaTabActive : ''}`}
+              onClick={() => setTab('set')}
+              disabled={!artist.tracks || artist.tracks.length === 0}
+            >
+              <ListMusic size={14} /> Set
+              {artist.tracks && artist.tracks.length > 0 && (
+                <span className={styles.mediaTabCount}>{artist.tracks.length}</span>
+              )}
+            </button>
           </div>
 
           {tab === 'biography' && artist.biography && (
@@ -188,6 +198,22 @@ const ArtistDetailPage: FC = () => {
                     <div className={styles.videoOverlay}>
                       <Play size={28} fill="#fff" />
                     </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {tab === 'set' && artist.tracks && artist.tracks.length > 0 && (
+            <section className={styles.section}>
+              <div className={styles.playlist}>
+                {artist.tracks.map((t, i) => (
+                  <div key={t.id ?? i} className={styles.playlistItem}>
+                    <div className={styles.playlistIndex}>{String(i + 1).padStart(2, '0')}</div>
+                    <div className={styles.playlistInfo}>
+                      <div className={styles.playlistTitle}>{t.title || `Faixa ${i + 1}`}</div>
+                    </div>
+                    <audio src={t.audio_url} controls preload="metadata" className={styles.playlistAudio} />
                   </div>
                 ))}
               </div>
