@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Calendar, MapPin, X, ShoppingBag, DollarSign } from 'lucide-react';
 import { eventService } from '@/services/events.service';
 import { projectService } from '@/services/projects.service';
@@ -320,27 +320,91 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onOpen }) => (
 
 interface ProductDetailModalProps { product: Product | null; onClose: () => void; onOrder: (p: Product) => void; }
 const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, onClose, onOrder }) => {
+  const photos = product?.photos || [];
+  const allImages = product ? [
+    ...(product.cover_image ? [product.cover_image] : []),
+    ...photos.map(p => p.image),
+  ] : [];
+  const [active, setActive] = useState(0);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef<{ x: number; sx: number; moved: boolean } | null>(null);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reset active ao trocar de produto
+    setActive(0);
+  }, [product?.id]);
+
   if (!product) return null;
+  const mainImage = allImages[active] || product.cover_image;
+
+  const onMouseDown = (e: React.MouseEvent) => {
+    if (!scrollRef.current) return;
+    dragRef.current = { x: e.clientX, sx: scrollRef.current.scrollLeft, moved: false };
+    scrollRef.current.style.cursor = 'grabbing';
+  };
+  const onMouseMove = (e: React.MouseEvent) => {
+    if (!dragRef.current || !scrollRef.current) return;
+    const dx = e.clientX - dragRef.current.x;
+    if (Math.abs(dx) > 3) dragRef.current.moved = true;
+    scrollRef.current.scrollLeft = dragRef.current.sx - dx;
+  };
+  const onMouseUp = () => {
+    if (scrollRef.current) scrollRef.current.style.cursor = 'grab';
+    setTimeout(() => { dragRef.current = null; }, 0);
+  };
+  const selectPhoto = (i: number) => {
+    if (dragRef.current?.moved) return;
+    setActive(i);
+  };
+
   return (
     <div className={styles.modalBackdrop} onClick={onClose}>
       <div className={styles.modalBox} onClick={e => e.stopPropagation()}>
         <button className={styles.modalClose} onClick={onClose}><X size={20} /></button>
-        {product.cover_image && (
+        {mainImage && (
           <div className={styles.modalImgWrap}>
-            <img src={product.cover_image} alt={product.title} />
+            <img src={mainImage} alt={product.title} />
           </div>
         )}
         <div className={styles.modalBody}>
           {product.category && <span className={styles.modalCategory}>{product.category}</span>}
-          <h2 className={styles.modalTitle}>{product.title}</h2>
-          <div className={styles.modalMeta}>
-            <span className={styles.modalPrice}>
-              {Number(product.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-            </span>
-            <span className={product.stock > 0 ? styles.prodInStock : styles.prodOutStock}>
-              {product.stock > 0 ? `${product.stock} em estoque` : 'Sem estoque'}
-            </span>
+
+          <div className={styles.modalTitleRow}>
+            <div className={styles.modalTitleCol}>
+              <h2 className={styles.modalTitle}>{product.title}</h2>
+              <div className={styles.modalMeta}>
+                <span className={styles.modalPrice}>
+                  {Number(product.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                </span>
+                <span className={product.stock > 0 ? styles.prodInStock : styles.prodOutStock}>
+                  {product.stock > 0 ? `${product.stock} em estoque` : 'Sem estoque'}
+                </span>
+              </div>
+            </div>
+            {allImages.length > 1 && (
+              <div
+                ref={scrollRef}
+                className={styles.modalCarousel}
+                onMouseDown={onMouseDown}
+                onMouseMove={onMouseMove}
+                onMouseUp={onMouseUp}
+                onMouseLeave={onMouseUp}
+              >
+                {allImages.map((src, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    className={`${styles.modalCarThumb} ${active === i ? styles.modalCarThumbActive : ''}`}
+                    onClick={() => selectPhoto(i)}
+                    aria-label={`Foto ${i + 1}`}
+                  >
+                    <img src={src} alt="" draggable={false} />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
+
           <p className={styles.modalDesc}>{product.description}</p>
           {product.full_content && <p className={styles.modalFull}>{product.full_content}</p>}
           {product.stock > 0 && (

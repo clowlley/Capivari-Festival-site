@@ -1,9 +1,59 @@
-import { useState, useEffect, useCallback, type FC } from 'react';
+import { useState, useEffect, useCallback, useRef, type FC } from 'react';
 import { Search, ShoppingBag, X, Filter, Tag, Package, Layers, AlignLeft, Banknote } from 'lucide-react';
 import { productService } from '@/services/products.service';
 import type { Product } from '@/types/product.types';
 import PublicLayout from '@/components/layout/PublicLayout';
 import styles from './ProductsListPage.module.css';
+
+/* ── Carrossel de thumbnails (slide drag, sempre 3 visíveis) ── */
+interface PhotoCarouselProps { photos: string[]; active: number; onSelect: (i: number) => void; }
+const PhotoCarousel: FC<PhotoCarouselProps> = ({ photos, active, onSelect }) => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef<{ x: number; sx: number; moved: boolean } | null>(null);
+
+  const onMouseDown = (e: React.MouseEvent) => {
+    if (!scrollRef.current) return;
+    dragRef.current = { x: e.clientX, sx: scrollRef.current.scrollLeft, moved: false };
+    scrollRef.current.style.cursor = 'grabbing';
+  };
+  const onMouseMove = (e: React.MouseEvent) => {
+    if (!dragRef.current || !scrollRef.current) return;
+    const dx = e.clientX - dragRef.current.x;
+    if (Math.abs(dx) > 3) dragRef.current.moved = true;
+    scrollRef.current.scrollLeft = dragRef.current.sx - dx;
+  };
+  const onMouseUp = () => {
+    if (scrollRef.current) scrollRef.current.style.cursor = 'grab';
+    setTimeout(() => { dragRef.current = null; }, 0);
+  };
+  const handleClick = (i: number) => {
+    if (dragRef.current?.moved) return;
+    onSelect(i);
+  };
+
+  return (
+    <div
+      ref={scrollRef}
+      className={styles.carousel}
+      onMouseDown={onMouseDown}
+      onMouseMove={onMouseMove}
+      onMouseUp={onMouseUp}
+      onMouseLeave={onMouseUp}
+    >
+      {photos.map((src, i) => (
+        <button
+          key={i}
+          type="button"
+          className={`${styles.carThumb} ${active === i ? styles.carThumbActive : ''}`}
+          onClick={() => handleClick(i)}
+          aria-label={`Foto ${i + 1}`}
+        >
+          <img src={src} alt="" draggable={false} />
+        </button>
+      ))}
+    </div>
+  );
+};
 
 /* ── helpers ─────────────────────────────────────────────── */
 const fmt = (v: number) =>
@@ -87,7 +137,6 @@ const DetailModal: FC<DetailModalProps> = ({ product, onClose, onOrder }) => {
   ];
   const [active, setActive] = useState(0);
   const mainImage = allImages[active] || product.cover_image;
-  const thumbs = allImages.slice(0, 3);
 
   return (
     <div className={styles.backdrop} onClick={onClose}>
@@ -111,24 +160,15 @@ const DetailModal: FC<DetailModalProps> = ({ product, onClose, onOrder }) => {
             </span>
           </div>
 
-          <h2 className={styles.detailTitle} style={{ textAlign: 'left' }}>{product.title}</h2>
-          <div className={styles.detailPrice} style={{ textAlign: 'left' }}>{fmt(Number(product.price))}</div>
-
-          {thumbs.length > 1 && (
-            <div className={styles.thumbRow}>
-              {thumbs.map((src, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  className={`${styles.thumb} ${active === i ? styles.thumbActive : ''}`}
-                  onClick={() => setActive(i)}
-                  aria-label={`Foto ${i + 1}`}
-                >
-                  <img src={src} alt="" />
-                </button>
-              ))}
+          <div className={styles.titleRow}>
+            <div className={styles.titleCol}>
+              <h2 className={styles.detailTitle} style={{ textAlign: 'left' }}>{product.title}</h2>
+              <div className={styles.detailPrice} style={{ textAlign: 'left' }}>{fmt(Number(product.price))}</div>
             </div>
-          )}
+            {allImages.length > 1 && (
+              <PhotoCarousel photos={allImages} active={active} onSelect={setActive} />
+            )}
+          </div>
 
           {product.description && (
             <p className={styles.detailDesc} style={{ textAlign: 'left' }}>{product.description}</p>
