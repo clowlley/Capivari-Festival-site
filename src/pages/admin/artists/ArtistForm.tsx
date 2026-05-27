@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Plus } from 'lucide-react';
-import type { Artist, ArtistPhoto } from '@/types/artist.types';
+import type { Artist, ArtistPhoto, ArtistVideo } from '@/types/artist.types';
 import { artistsService } from '@/services/artists.service';
 import { useToast } from '@/hooks/useToast';
 import { Button } from '@/components/ui/Button';
@@ -12,12 +12,14 @@ interface Props {
   onCancel: () => void;
 }
 
-const MAX_PHOTOS = 4;
+const MAX_PHOTOS = 10;
+const MAX_VIDEOS = 10;
 
 const ArtistForm: React.FC<Props> = ({ artist, onSuccess, onCancel }) => {
   const isEdit = !!artist;
   const toast = useToast();
   const photoInputRef = useRef<HTMLInputElement>(null);
+  const videoInputRef = useRef<HTMLInputElement>(null);
 
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -36,6 +38,8 @@ const ArtistForm: React.FC<Props> = ({ artist, onSuccess, onCancel }) => {
   const [profileFile, setProfileFile] = useState<File | null>(null);
   const [newPhotoFiles, setNewPhotoFiles] = useState<File[]>([]);
   const [existingPhotos, setExistingPhotos] = useState<ArtistPhoto[]>([]);
+  const [newVideoFiles, setNewVideoFiles] = useState<File[]>([]);
+  const [existingVideos, setExistingVideos] = useState<ArtistVideo[]>([]);
 
   useEffect(() => {
     if (artist) {
@@ -52,6 +56,7 @@ const ArtistForm: React.FC<Props> = ({ artist, onSuccess, onCancel }) => {
         featured: artist.featured,
       });
       setExistingPhotos(artist.photos || []);
+      setExistingVideos(artist.videos || []);
     }
   }, [artist]);
 
@@ -81,6 +86,27 @@ const ArtistForm: React.FC<Props> = ({ artist, onSuccess, onCancel }) => {
     }
   };
 
+  const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    const remaining = MAX_VIDEOS - existingVideos.length - newVideoFiles.length;
+    setNewVideoFiles(prev => [...prev, ...files].slice(0, prev.length + remaining));
+    e.target.value = '';
+  };
+
+  const removeNewVideo = (index: number) => {
+    setNewVideoFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleDeleteExistingVideo = async (video: ArtistVideo) => {
+    if (!confirm('Remover este vídeo?')) return;
+    try {
+      await artistsService.deleteVideo(video.id);
+      setExistingVideos(prev => prev.filter(v => v.id !== video.id));
+    } catch {
+      toast.error('Erro ao remover vídeo.');
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -90,6 +116,7 @@ const ArtistForm: React.FC<Props> = ({ artist, onSuccess, onCancel }) => {
       if (coverFile) data.append('cover_image_file', coverFile);
       if (profileFile) data.append('profile_image_file', profileFile);
       newPhotoFiles.forEach(f => data.append('photo_files', f));
+      newVideoFiles.forEach(f => data.append('video_files', f));
 
       if (isEdit && artist?.id) {
         await artistsService.updateArtist(artist.id, data);
@@ -109,6 +136,8 @@ const ArtistForm: React.FC<Props> = ({ artist, onSuccess, onCancel }) => {
 
   const totalPhotos = existingPhotos.length + newPhotoFiles.length;
   const canAddMore = totalPhotos < MAX_PHOTOS;
+  const totalVideos = existingVideos.length + newVideoFiles.length;
+  const canAddMoreVideos = totalVideos < MAX_VIDEOS;
 
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
@@ -216,6 +245,42 @@ const ArtistForm: React.FC<Props> = ({ artist, onSuccess, onCancel }) => {
           multiple
           style={{ display: 'none' }}
           onChange={handlePhotoSelect}
+        />
+      </div>
+
+      <div className={styles.field}>
+        <label>Vídeos <span className={styles.hint}>(máximo {MAX_VIDEOS} — MP4, MOV, WebM)</span></label>
+        <div className={styles.photosGrid}>
+          {existingVideos.map(v => (
+            <div key={v.id} className={styles.photoThumb}>
+              <video src={v.video_url} muted preload="metadata" />
+              <button type="button" className={styles.removePhoto} onClick={() => handleDeleteExistingVideo(v)}>
+                <X size={12} />
+              </button>
+            </div>
+          ))}
+          {newVideoFiles.map((f, i) => (
+            <div key={`newv-${i}`} className={styles.photoThumb}>
+              <video src={URL.createObjectURL(f)} muted preload="metadata" />
+              <button type="button" className={styles.removePhoto} onClick={() => removeNewVideo(i)}>
+                <X size={12} />
+              </button>
+            </div>
+          ))}
+          {canAddMoreVideos && (
+            <button type="button" className={styles.addPhoto} onClick={() => videoInputRef.current?.click()}>
+              <Plus size={20} />
+              <span>{MAX_VIDEOS - totalVideos} restante{MAX_VIDEOS - totalVideos !== 1 ? 's' : ''}</span>
+            </button>
+          )}
+        </div>
+        <input
+          ref={videoInputRef}
+          type="file"
+          accept="video/mp4,video/quicktime,video/webm"
+          multiple
+          style={{ display: 'none' }}
+          onChange={handleVideoSelect}
         />
       </div>
 

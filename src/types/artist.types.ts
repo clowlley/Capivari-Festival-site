@@ -1,7 +1,13 @@
 export interface ArtistPhoto {
   id: number;
-  artist_id: number;
+  artist_id?: number;
   image: string;
+}
+
+export interface ArtistVideo {
+  id: number;
+  artist_id?: number;
+  video_url: string;
 }
 
 export interface Artist {
@@ -18,6 +24,7 @@ export interface Artist {
   status: 'draft' | 'published';
   featured: boolean;
   photos: ArtistPhoto[];
+  videos?: ArtistVideo[];
   created_at?: string;
   updated_at?: string;
 }

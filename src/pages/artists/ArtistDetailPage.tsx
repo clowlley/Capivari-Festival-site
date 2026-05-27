@@ -1,6 +1,6 @@
 import { useState, useEffect, type FC } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, ExternalLink, Clock, User, Music2 } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Clock, User, Music2, Image as ImageIcon, Video as VideoIcon, Play } from 'lucide-react';
 import { artistsService } from '@/services/artists.service';
 import type { Artist } from '@/types/artist.types';
 import PublicLayout from '@/components/layout/PublicLayout';
@@ -13,6 +13,8 @@ const ArtistDetailPage: FC = () => {
   const [artist, setArtist] = useState<Artist | null>(null);
   const [loading, setLoading] = useState(true);
   const [lightbox, setLightbox] = useState<string | null>(null);
+  const [videoLightbox, setVideoLightbox] = useState<string | null>(null);
+  const [mediaTab, setMediaTab] = useState<'photos' | 'videos'>('photos');
 
   useEffect(() => {
     if (!id) return;
@@ -120,25 +122,66 @@ const ArtistDetailPage: FC = () => {
             </section>
           )}
 
-          {artist.photos && artist.photos.length > 0 && (
+          {((artist.photos && artist.photos.length > 0) || (artist.videos && artist.videos.length > 0)) && (
             <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>Fotos</h2>
-              <div className={styles.photosGrid}>
-                {artist.photos.map((p, i) => (
-                  <div
-                    key={p.id ?? i}
-                    className={styles.photoThumb}
-                    onClick={() => setLightbox(p.image)}
-                  >
-                    <img src={p.image} alt="" loading="lazy" />
-                  </div>
-                ))}
+              <div className={styles.mediaTabs}>
+                <button
+                  className={`${styles.mediaTab} ${mediaTab === 'photos' ? styles.mediaTabActive : ''}`}
+                  onClick={() => setMediaTab('photos')}
+                  disabled={!artist.photos || artist.photos.length === 0}
+                >
+                  <ImageIcon size={14} /> Fotos
+                  {artist.photos && artist.photos.length > 0 && (
+                    <span className={styles.mediaTabCount}>{artist.photos.length}</span>
+                  )}
+                </button>
+                <button
+                  className={`${styles.mediaTab} ${mediaTab === 'videos' ? styles.mediaTabActive : ''}`}
+                  onClick={() => setMediaTab('videos')}
+                  disabled={!artist.videos || artist.videos.length === 0}
+                >
+                  <VideoIcon size={14} /> Vídeos
+                  {artist.videos && artist.videos.length > 0 && (
+                    <span className={styles.mediaTabCount}>{artist.videos.length}</span>
+                  )}
+                </button>
               </div>
+
+              {mediaTab === 'photos' && artist.photos && artist.photos.length > 0 && (
+                <div className={styles.photosGrid}>
+                  {artist.photos.map((p, i) => (
+                    <div
+                      key={p.id ?? i}
+                      className={styles.photoThumb}
+                      onClick={() => setLightbox(p.image)}
+                    >
+                      <img src={p.image} alt="" loading="lazy" />
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {mediaTab === 'videos' && artist.videos && artist.videos.length > 0 && (
+                <div className={styles.photosGrid}>
+                  {artist.videos.map((v, i) => (
+                    <div
+                      key={v.id ?? i}
+                      className={styles.videoThumb}
+                      onClick={() => setVideoLightbox(v.video_url)}
+                    >
+                      <video src={v.video_url} muted preload="metadata" />
+                      <div className={styles.videoOverlay}>
+                        <Play size={28} fill="#fff" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </section>
           )}
         </div>
 
-        {/* ── Lightbox ── */}
+        {/* ── Lightbox foto ── */}
         {lightbox && (
           <div className={styles.lbOverlay} onClick={() => setLightbox(null)}>
             <img
@@ -148,6 +191,22 @@ const ArtistDetailPage: FC = () => {
               onClick={e => e.stopPropagation()}
             />
             <button className={styles.lbClose} onClick={() => setLightbox(null)}>
+              <ArrowLeft size={15} /> Fechar
+            </button>
+          </div>
+        )}
+
+        {/* ── Lightbox vídeo ── */}
+        {videoLightbox && (
+          <div className={styles.lbOverlay} onClick={() => setVideoLightbox(null)}>
+            <video
+              src={videoLightbox}
+              className={styles.lbImg}
+              controls
+              autoPlay
+              onClick={e => e.stopPropagation()}
+            />
+            <button className={styles.lbClose} onClick={() => setVideoLightbox(null)}>
               <ArrowLeft size={15} /> Fechar
             </button>
           </div>
