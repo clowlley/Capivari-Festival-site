@@ -268,50 +268,77 @@
 }
 
 /* Fotos — 4 em linha */
-/* ── Tabs FOTOS / VÍDEOS ── */
+/* ── Tabs header full width ── */
 .mediaTabs {
   display: flex;
-  gap: 4px;
-  padding: 4px;
-  background: rgba(255, 255, 255, 0.04);
+  width: 100%;
+  background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 100px;
-  width: fit-content;
-  margin-bottom: 4px;
+  border-radius: 12px;
+  padding: 0;
+  gap: 0;
+  margin-bottom: 28px;
+  overflow: hidden;
 }
 .mediaTab {
+  flex: 1;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 18px;
-  border-radius: 100px;
+  justify-content: center;
+  gap: 10px;
+  padding: 18px 16px;
   border: none;
   background: transparent;
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.5);
   font-family: inherit;
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   font-weight: 600;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   cursor: pointer;
+  position: relative;
   transition: background 0.2s, color 0.2s;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
 }
-.mediaTab:hover:not(:disabled) { color: #fff; }
-.mediaTab:disabled { opacity: 0.35; cursor: not-allowed; }
+.mediaTab:last-child { border-right: none; }
+.mediaTab:hover:not(:disabled) { color: #fff; background: rgba(255, 255, 255, 0.03); }
+.mediaTab:disabled { opacity: 0.3; cursor: not-allowed; }
 .mediaTabActive {
-  background: linear-gradient(135deg, #b44fff 0%, #ff4fa3 100%);
   color: #fff;
-  box-shadow: 0 4px 14px rgba(180, 79, 255, 0.35);
+  background: rgba(180, 79, 255, 0.06);
+}
+.mediaTabActive::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 12%;
+  right: 12%;
+  height: 2px;
+  background: linear-gradient(90deg, #ff4fa3 0%, #b44fff 50%, #6c7fff 100%);
+  border-radius: 2px;
+  box-shadow: 0 0 12px rgba(180, 79, 255, 0.5);
 }
 .mediaTabCount {
-  background: rgba(0, 0, 0, 0.25);
+  background: rgba(255, 255, 255, 0.08);
   border-radius: 100px;
-  padding: 1px 8px;
+  padding: 2px 9px;
   font-size: 0.7rem;
   font-weight: 700;
+  min-width: 22px;
+  text-align: center;
 }
 .mediaTabActive .mediaTabCount {
-  background: rgba(255, 255, 255, 0.25);
+  background: linear-gradient(135deg, #b44fff 0%, #ff4fa3 100%);
+  color: #fff;
+}
+
+@media (max-width: 640px) {
+  .mediaTab {
+    padding: 14px 8px;
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    gap: 6px;
+  }
 }
 
 .photosGrid {
