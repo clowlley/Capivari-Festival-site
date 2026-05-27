@@ -79,53 +79,80 @@ const OrderModal: FC<OrderModalProps> = ({ product, onClose }) => {
 
 /* ── Product Detail Modal ────────────────────────────────── */
 interface DetailModalProps { product: Product; onClose: () => void; onOrder: (p: Product) => void; }
-const DetailModal: FC<DetailModalProps> = ({ product, onClose, onOrder }) => (
-  <div className={styles.backdrop} onClick={onClose}>
-    <div className={`${styles.modal} ${styles.modalDetail}`} onClick={e => e.stopPropagation()}>
-      <button className={styles.closeBtn} onClick={onClose}><X size={18} /></button>
+const DetailModal: FC<DetailModalProps> = ({ product, onClose, onOrder }) => {
+  const photos = product.photos || [];
+  const allImages = [
+    ...(product.cover_image ? [product.cover_image] : []),
+    ...photos.map(p => p.image),
+  ];
+  const [active, setActive] = useState(0);
+  const mainImage = allImages[active] || product.cover_image;
+  const thumbs = allImages.slice(0, 3);
 
-      {product.cover_image && (
-        <div className={styles.detailImg}>
-          <img src={product.cover_image} alt={product.title} />
-        </div>
-      )}
+  return (
+    <div className={styles.backdrop} onClick={onClose}>
+      <div className={`${styles.modal} ${styles.modalDetail}`} onClick={e => e.stopPropagation()}>
+        <button className={styles.closeBtn} onClick={onClose}><X size={18} /></button>
 
-      <div className={styles.detailBody} style={{ textAlign: 'left' }}>
-        <div className={styles.detailMeta} style={{ justifyContent: 'flex-start' }}>
-          {product.category && (
-            <span className={styles.catPill}><Tag size={10} /> {product.category}</span>
-          )}
-          <span className={product.stock > 0 ? styles.inStock : styles.outStock}>
-            <Package size={10} />
-            {product.stock > 0 ? `${product.stock} em estoque` : 'Sem estoque'}
-          </span>
-        </div>
-
-        <h2 className={styles.detailTitle} style={{ textAlign: 'left' }}>{product.title}</h2>
-        <div className={styles.detailPrice} style={{ textAlign: 'left' }}>{fmt(Number(product.price))}</div>
-
-        {product.description && (
-          <p className={styles.detailDesc} style={{ textAlign: 'left' }}>{product.description}</p>
-        )}
-
-        {product.full_content && (
-          <div className={styles.detailFull} style={{ textAlign: 'left' }}>
-            <div className={styles.detailFullLabel}>Detalhes do produto</div>
-            <p>{product.full_content}</p>
+        {mainImage && (
+          <div className={styles.detailImg}>
+            <img src={mainImage} alt={product.title} />
           </div>
         )}
 
-        {product.stock > 0 ? (
-          <button className={styles.submitBtn} onClick={() => onOrder(product)}>
-            <ShoppingBag size={16} /> Fazer pedido via WhatsApp
-          </button>
-        ) : (
-          <div className={styles.soldOut}>Produto fora de estoque</div>
-        )}
+        <div className={styles.detailBody} style={{ textAlign: 'left' }}>
+          <div className={styles.detailMeta} style={{ justifyContent: 'flex-start' }}>
+            {product.category && (
+              <span className={styles.catPill}><Tag size={10} /> {product.category}</span>
+            )}
+            <span className={product.stock > 0 ? styles.inStock : styles.outStock}>
+              <Package size={10} />
+              {product.stock > 0 ? `${product.stock} em estoque` : 'Sem estoque'}
+            </span>
+          </div>
+
+          <h2 className={styles.detailTitle} style={{ textAlign: 'left' }}>{product.title}</h2>
+          <div className={styles.detailPrice} style={{ textAlign: 'left' }}>{fmt(Number(product.price))}</div>
+
+          {thumbs.length > 1 && (
+            <div className={styles.thumbRow}>
+              {thumbs.map((src, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  className={`${styles.thumb} ${active === i ? styles.thumbActive : ''}`}
+                  onClick={() => setActive(i)}
+                  aria-label={`Foto ${i + 1}`}
+                >
+                  <img src={src} alt="" />
+                </button>
+              ))}
+            </div>
+          )}
+
+          {product.description && (
+            <p className={styles.detailDesc} style={{ textAlign: 'left' }}>{product.description}</p>
+          )}
+
+          {product.full_content && (
+            <div className={styles.detailFull} style={{ textAlign: 'left' }}>
+              <div className={styles.detailFullLabel}>Detalhes do produto</div>
+              <p>{product.full_content}</p>
+            </div>
+          )}
+
+          {product.stock > 0 ? (
+            <button className={styles.submitBtn} onClick={() => onOrder(product)}>
+              <ShoppingBag size={16} /> Fazer pedido via WhatsApp
+            </button>
+          ) : (
+            <div className={styles.soldOut}>Produto fora de estoque</div>
+          )}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 /* ── Product Card ────────────────────────────────────────── */
 interface CardProps { product: Product; onOpen: (p: Product) => void; }

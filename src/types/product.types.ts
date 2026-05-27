@@ -1,3 +1,8 @@
+export interface ProductPhoto {
+  id: number;
+  image: string;
+}
+
 export interface Product {
   id: number;
   title: string;
@@ -10,6 +15,7 @@ export interface Product {
   status: 'draft' | 'published';
   featured: boolean;
   whatsapp?: string;
+  photos?: ProductPhoto[];
   created_at?: string;
   updated_at?: string;
 }

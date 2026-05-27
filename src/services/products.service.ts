@@ -30,4 +30,8 @@ export const productService = {
   async deleteProduct(id: number): Promise<void> {
     await api.delete(`/products/admin/${id}`);
   },
+
+  async deleteProductPhoto(photoId: number): Promise<void> {
+    await api.delete(`/products/admin/photos/${photoId}`);
+  },
 };
