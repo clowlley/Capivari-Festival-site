@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FC } from 'react';
+import { useEffect, useRef, useState, type FC, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { Bell, Heart, MessageSquare, UserPlus } from 'lucide-react';
 import { notificationsService } from '@/services/notifications.service';
@@ -13,7 +13,7 @@ const ago = (d: string) => {
   return new Date(d).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
 };
 
-const describe = (n: AppNotification): { text: string; to: string; icon: JSX.Element } => {
+const describe = (n: AppNotification): { text: string; to: string; icon: ReactNode } => {
   const who = n.actor_name || 'Alguém';
   switch (n.type) {
     case 'topic_like':
