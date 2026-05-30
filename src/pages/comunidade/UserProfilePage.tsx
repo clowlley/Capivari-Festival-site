@@ -92,25 +92,6 @@ const UserProfilePage: FC = () => {
           ) : !profile ? null : (
             <>
               <section className={styles.profileCard}>
-                <div className={styles.profileActions}>
-                  {user && <NotificationsBell />}
-                  {isSelf ? (
-                    <Link to="/painel/perfil" className={`${styles.followBtn} ${styles.followingBtn}`}>
-                      Editar perfil
-                    </Link>
-                  ) : (
-                    <button
-                      className={`${styles.followBtn} ${profile.is_following ? styles.followingBtn : ''}`}
-                      onClick={toggleFollow}
-                      disabled={following}
-                    >
-                      {profile.is_following
-                        ? <><UserCheck size={16} /> Seguindo</>
-                        : <><UserPlus size={16} /> Seguir</>}
-                    </button>
-                  )}
-                </div>
-
                 <div className={styles.profileMain}>
                   <div className={styles.profileHead}>
                     <div className={styles.profileAvatar}>
@@ -154,6 +135,25 @@ const UserProfilePage: FC = () => {
                     <span className={styles.insightNum}>{profile.interaction_count}</span>
                     <span className={styles.insightLabel}>Interações totais</span>
                     <span className={styles.insightHint}>tópicos + respostas + curtidas dadas</span>
+                  </div>
+
+                  <div className={styles.profileActions}>
+                    {isSelf && <NotificationsBell />}
+                    {isSelf ? (
+                      <Link to="/painel/perfil" className={`${styles.followBtn} ${styles.followingBtn}`}>
+                        Editar perfil
+                      </Link>
+                    ) : (
+                      <button
+                        className={`${styles.followBtn} ${profile.is_following ? styles.followingBtn : ''}`}
+                        onClick={toggleFollow}
+                        disabled={following}
+                      >
+                        {profile.is_following
+                          ? <><UserCheck size={16} /> Seguindo</>
+                          : <><UserPlus size={16} /> Seguir</>}
+                      </button>
+                    )}
                   </div>
                 </div>
               </section>

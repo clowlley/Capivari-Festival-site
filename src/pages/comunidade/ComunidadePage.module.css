@@ -545,6 +545,7 @@ textarea.input { resize: vertical; line-height: 1.55; }
   flex: 1; min-width: 0;
   border-left: 1px solid rgba(255,255,255,0.08);
   padding-left: 24px;
+  display: flex; flex-direction: column; gap: 16px;
 }
 .profileHead { display: flex; align-items: center; gap: 18px; }
 .profileAvatar {
@@ -573,7 +574,7 @@ textarea.input { resize: vertical; line-height: 1.55; }
 .statBox { display: flex; flex-direction: column; }
 .statNum { font-size: 1.15rem; font-weight: 800; color: #fff; }
 .statLabel { font-size: 0.72rem; color: rgba(255,255,255,0.45); letter-spacing: 0.04em; }
-.profileActions { position: absolute; top: 20px; right: 20px; display: flex; align-items: center; gap: 10px; z-index: 3; }
+.profileActions { display: flex; align-items: center; gap: 10px; }
 
 /* sino de notificações */
 .bellWrap { position: relative; }
@@ -681,7 +682,7 @@ textarea.input { resize: vertical; line-height: 1.55; }
   .detailSide { flex-direction: column; }
 }
 @media (max-width: 640px) {
-  .profileCard { flex-direction: column; padding-top: 64px; }
+  .profileCard { flex-direction: column; }
   .profileAside { border-left: none; border-top: 1px solid rgba(255,255,255,0.08); padding-left: 0; padding-top: 18px; }
 }
 @media (max-width: 520px) {
