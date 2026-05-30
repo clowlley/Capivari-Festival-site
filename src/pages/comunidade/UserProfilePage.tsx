@@ -91,42 +91,6 @@ const UserProfilePage: FC = () => {
           ) : !profile ? null : (
             <>
               <section className={styles.profileCard}>
-                <div className={styles.profileHead}>
-                  <div className={styles.profileAvatar}>
-                    {profile.avatar_url
-                      ? <img src={profile.avatar_url} alt="" />
-                      : <span>{(profile.name?.[0] ?? '?').toUpperCase()}</span>}
-                  </div>
-                  <div className={styles.profileIdentity}>
-                    <h1 className={styles.profileName}>
-                      {profile.name}
-                      {profile.role === 'admin' && <span className={styles.roleBadge}>Admin</span>}
-                    </h1>
-                    <span className={styles.profileSince}>Membro desde {fmtDate(profile.created_at)}</span>
-                  </div>
-                </div>
-
-                {profile.bio && <p className={styles.profileBio}>{profile.bio}</p>}
-
-                <div className={styles.profileStats}>
-                  <div className={styles.statBox}>
-                    <span className={styles.statNum}>{profile.topic_count}</span>
-                    <span className={styles.statLabel}>Tópicos</span>
-                  </div>
-                  <div className={styles.statBox}>
-                    <span className={styles.statNum}>{profile.reply_count}</span>
-                    <span className={styles.statLabel}>Respostas</span>
-                  </div>
-                  <div className={styles.statBox}>
-                    <span className={styles.statNum}>{profile.follower_count}</span>
-                    <span className={styles.statLabel}>Seguidores</span>
-                  </div>
-                  <div className={styles.statBox}>
-                    <span className={styles.statNum}>{profile.following_count}</span>
-                    <span className={styles.statLabel}>Seguindo</span>
-                  </div>
-                </div>
-
                 {isSelf ? (
                   <div className={styles.profileActions}>
                     <Link to="/painel/perfil" className={`${styles.followBtn} ${styles.followingBtn}`}>
@@ -146,6 +110,48 @@ const UserProfilePage: FC = () => {
                     </button>
                   </div>
                 )}
+
+                <div className={styles.profileMain}>
+                  <div className={styles.profileHead}>
+                    <div className={styles.profileAvatar}>
+                      {profile.avatar_url
+                        ? <img src={profile.avatar_url} alt="" />
+                        : <span>{(profile.name?.[0] ?? '?').toUpperCase()}</span>}
+                    </div>
+                    <div className={styles.profileIdentity}>
+                      <h1 className={styles.profileName}>
+                        {profile.name}
+                        {profile.role === 'admin' && <span className={styles.roleBadge}>Admin</span>}
+                      </h1>
+                      <span className={styles.profileSince}>Membro desde {fmtDate(profile.created_at)}</span>
+                    </div>
+                  </div>
+
+                  {profile.bio && <p className={styles.profileBio}>{profile.bio}</p>}
+
+                  <div className={styles.profileStats}>
+                    <div className={styles.statBox}>
+                      <span className={styles.statNum}>{profile.topic_count}</span>
+                      <span className={styles.statLabel}>Tópicos</span>
+                    </div>
+                    <div className={styles.statBox}>
+                      <span className={styles.statNum}>{profile.reply_count}</span>
+                      <span className={styles.statLabel}>Respostas</span>
+                    </div>
+                    <div className={styles.statBox}>
+                      <span className={styles.statNum}>{profile.follower_count}</span>
+                      <span className={styles.statLabel}>Seguidores</span>
+                    </div>
+                    <div className={styles.statBox}>
+                      <span className={styles.statNum}>{profile.following_count}</span>
+                      <span className={styles.statLabel}>Seguindo</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className={styles.profileAside}>
+                  {/* espaço reservado — conteúdo futuro */}
+                </div>
               </section>
 
               <h2 className={styles.profileSectionTitle}>Tópicos de {profile.name} ({profile.topic_count})</h2>

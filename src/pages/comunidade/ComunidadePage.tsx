@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useRef, useState, type FC } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import PublicLayout from '@/components/layout/PublicLayout';
-import { Search, Plus, X, Send, ImagePlus, Heart, MessageSquare, Clock, MessageCircle, Hash, Trophy, Pencil, Trash2 } from 'lucide-react';
+import { Search, Plus, X, Send, ImagePlus, Heart, MessageSquare, Clock, MessageCircle, Hash, Trophy, Pencil, Trash2, UserPlus, UserCheck, Users } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/useToast';
 import { communityService } from '@/services/community.service';
+import { usersService } from '@/services/users.service';
 import type { Category, Topic, ActiveMember } from '@/types/community.types';
+import type { UserSearchResult } from '@/types/user.types';
 import KebabMenu from './KebabMenu';
 import ClampText from './ClampText';
 import styles from './ComunidadePage.module.css';
@@ -32,6 +34,8 @@ const ComunidadePage: FC = () => {
   const [activeCat, setActiveCat] = useState('');
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+  const [tab, setTab] = useState<'recentes' | 'seguindo'>('recentes');
+  const [people, setPeople] = useState<UserSearchResult[]>([]);
 
   // composer
   const [open, setOpen] = useState(false);
@@ -59,7 +63,40 @@ const ComunidadePage: FC = () => {
 
   const selectCat = (slug: string) => {
     setActiveCat(slug);
+    setTab('recentes');
     loadTopics(slug);
+  };
+
+  const selectTab = (t: 'recentes' | 'seguindo') => {
+    setTab(t);
+    if (t === 'seguindo') {
+      if (!user) { requireLogin(); return; }
+      setLoading(true);
+      usersService.getFollowingFeed()
+        .then(setTopics)
+        .catch(() => toast.error('Erro ao carregar o feed.'))
+        .finally(() => setLoading(false));
+    } else {
+      loadTopics(activeCat);
+    }
+  };
+
+  // Busca de pessoas (debounced) — aparece quando há texto na busca
+  useEffect(() => {
+    const q = search.trim();
+    if (q.length < 2) { setPeople([]); return; }
+    const id = setTimeout(() => {
+      usersService.searchUsers(q).then(setPeople).catch(() => setPeople([]));
+    }, 300);
+    return () => clearTimeout(id);
+  }, [search]);
+
+  const toggleFollow = async (p: UserSearchResult) => {
+    if (!user) return requireLogin();
+    try {
+      const r = await usersService.toggleFollow(p.id);
+      setPeople((prev) => prev.map((x) => (x.id === p.id ? { ...x, is_following: r.following, follower_count: r.follower_count } : x)));
+    } catch { toast.error('Erro ao seguir usuário.'); }
   };
 
   const filtered = useMemo(() => {
@@ -170,7 +207,7 @@ const ComunidadePage: FC = () => {
               <div className={styles.searchWrap}>
                 <Search size={16} />
                 <input
-                  placeholder="Buscar tópicos…"
+                  placeholder="Buscar tópicos ou pessoas…"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
@@ -179,6 +216,48 @@ const ComunidadePage: FC = () => {
                 {open ? <><X size={16} /> Fechar</> : <><Plus size={16} /> Novo tópico</>}
               </button>
             </form>
+
+            <div className={styles.tabs}>
+              <button
+                className={`${styles.tab} ${tab === 'recentes' ? styles.tabActive : ''}`}
+                onClick={() => selectTab('recentes')}
+              >
+                Recentes
+              </button>
+              <button
+                className={`${styles.tab} ${tab === 'seguindo' ? styles.tabActive : ''}`}
+                onClick={() => selectTab('seguindo')}
+              >
+                <Users size={14} /> Seguindo
+              </button>
+            </div>
+
+            {people.length > 0 && (
+              <div className={styles.peopleSection}>
+                <h3 className={styles.colTitle}>Pessoas</h3>
+                {people.map((p) => (
+                  <div key={p.id} className={styles.personRow}>
+                    <Link to={`/usuarios/${p.id}`} className={styles.personAvatar}>
+                      {p.avatar_url ? <img src={p.avatar_url} alt="" /> : <span>{(p.name?.[0] ?? '?').toUpperCase()}</span>}
+                    </Link>
+                    <Link to={`/usuarios/${p.id}`} className={styles.personInfo}>
+                      <span className={styles.personName}>{p.name}</span>
+                      <span className={styles.personBio}>
+                        {p.bio || `${p.follower_count} seguidor${p.follower_count === 1 ? '' : 'es'}`}
+                      </span>
+                    </Link>
+                    {user?.id !== p.id && (
+                      <button
+                        className={`${styles.personFollow} ${p.is_following ? styles.personFollowing : ''}`}
+                        onClick={() => toggleFollow(p)}
+                      >
+                        {p.is_following ? <><UserCheck size={13} /> Seguindo</> : <><UserPlus size={13} /> Seguir</>}
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
 
             {open && (
               <form className={styles.composer} onSubmit={submit}>
@@ -234,7 +313,11 @@ const ComunidadePage: FC = () => {
             {loading ? (
               <div className={styles.empty}>Carregando…</div>
             ) : filtered.length === 0 ? (
-              <div className={styles.empty}>Nenhum tópico encontrado.</div>
+              <div className={styles.empty}>
+                {tab === 'seguindo'
+                  ? 'Você ainda não segue ninguém — ou quem você segue não publicou nada. Busque pessoas acima.'
+                  : 'Nenhum tópico encontrado.'}
+              </div>
             ) : (
               <div className={styles.list}>
                 {filtered.map((t) => (

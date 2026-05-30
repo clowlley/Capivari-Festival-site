@@ -16,3 +16,13 @@ export interface FollowResult {
   following: boolean;
   follower_count: number;
 }
+
+export interface UserSearchResult {
+  id: number;
+  name: string;
+  avatar_url: string | null;
+  bio: string | null;
+  role: 'admin' | 'user';
+  follower_count: number;
+  is_following: boolean;
+}
