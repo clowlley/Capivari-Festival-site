@@ -9,6 +9,7 @@ import Register from '@/pages/public/Register';
 import UserDashboard from '@/pages/user/UserDashboard';
 import ProfileSection from '@/pages/user/ProfileSection';
 import ComunidadeSection from '@/pages/user/ComunidadeSection';
+import TopicDetail from '@/pages/user/TopicDetail';
 import Home from '@/pages/home/home';
 import EventsListPage from '@/pages/events/EventsListPage';
 import EventDetailPage from '@/pages/events/EventDetailPage';
@@ -28,6 +29,7 @@ import ProjectsManager from '@/pages/admin/projects/ProjectsManager';
 import ProjectsPage from '@/pages/projects/ProjectsPage';
 import ProjectDetailPage from '@/pages/projects/ProjectDetailPage';
 import ArtistsManager from '@/pages/admin/artists/ArtistsManager';
+import ModerationManager from '@/pages/admin/moderation/ModerationManager';
 import SobrePage from '@/pages/sobre/SobrePage';
 import SettingsManager from '@/pages/admin/settings/SettingsManager';
 import ArtistsPage from '@/pages/artists/ArtistsPage';
@@ -56,6 +58,7 @@ const App: React.FC = () => {
             <Route index element={<ProfileSection />} />
             <Route path="perfil" element={<ProfileSection />} />
             <Route path="comunidade" element={<ComunidadeSection />} />
+            <Route path="comunidade/:topicId" element={<TopicDetail />} />
           </Route>
         </Route>
         <Route path="/eventos" element={<EventsListPage />} />
@@ -96,6 +99,7 @@ const App: React.FC = () => {
             <Route path="projects" element={<ProjectsManager />} />
             <Route path="rss" element={<RssManager />} />
             <Route path="contact" element={<ContactManager />} />
+            <Route path="moderation" element={<ModerationManager />} />
             <Route path="displays" element={<DisplaysManager />} />
             <Route path="settings" element={<SettingsManager />} />
           </Route>
