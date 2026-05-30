@@ -407,7 +407,8 @@
     z-index: 199;
     gap: 0;
   }
-  .userArea { display: none; }
+  .userArea { margin-left: auto; margin-right: 10px; }
+  .navCta { display: inline-block; max-width: 40vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .linksOpen {
     display: flex;
     animation: slideDown 0.22s ease both;
