@@ -10,6 +10,7 @@ import UserDashboard from '@/pages/user/UserDashboard';
 import ProfileSection from '@/pages/user/ProfileSection';
 import ComunidadePage from '@/pages/comunidade/ComunidadePage';
 import TopicPage from '@/pages/comunidade/TopicPage';
+import UserProfilePage from '@/pages/comunidade/UserProfilePage';
 import Home from '@/pages/home/home';
 import EventsListPage from '@/pages/events/EventsListPage';
 import EventDetailPage from '@/pages/events/EventDetailPage';
@@ -63,6 +64,7 @@ const App: React.FC = () => {
         {/* Comunidade (página pública) */}
         <Route path="/comunidade" element={<ComunidadePage />} />
         <Route path="/comunidade/:topicId" element={<TopicPage />} />
+        <Route path="/usuarios/:userId" element={<UserProfilePage />} />
 
         <Route path="/eventos" element={<EventsListPage />} />
         <Route path="/eventos/:id" element={<EventDetailPage />} />

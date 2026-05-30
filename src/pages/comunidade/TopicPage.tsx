@@ -26,11 +26,12 @@ const isVideoUrl = (u: string) => /\/video\/upload\//.test(u) || /\.(mp4|webm|mo
 const fmt = (d: string) =>
   new Date(d).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
 
-const Avatar: FC<{ name: string; src: string | null }> = ({ name, src }) => (
-  <div className={styles.avatar}>
-    {src ? <img src={src} alt="" /> : <span>{(name?.[0] ?? '?').toUpperCase()}</span>}
-  </div>
-);
+const Avatar: FC<{ name: string; src: string | null; to?: string }> = ({ name, src, to }) => {
+  const inner = src ? <img src={src} alt="" /> : <span>{(name?.[0] ?? '?').toUpperCase()}</span>;
+  return to
+    ? <Link to={to} className={styles.avatar}>{inner}</Link>
+    : <div className={styles.avatar}>{inner}</div>;
+};
 
 const Media: FC<{ url: string }> = ({ url }) =>
   isVideoUrl(url)
@@ -244,9 +245,9 @@ const TopicPage: FC = () => {
                   </KebabMenu>
                 )}
                 <div className={styles.topicHead}>
-                  <Avatar name={topic.author_name} src={topic.author_avatar} />
+                  <Avatar name={topic.author_name} src={topic.author_avatar} to={`/usuarios/${topic.author_id}`} />
                   <div className={styles.cardMeta}>
-                    <span className={styles.metaText}>{topic.author_name}</span>
+                    <Link to={`/usuarios/${topic.author_id}`} className={styles.metaTextLink}>{topic.author_name}</Link>
                     <span className={styles.metaSub}>
                       <span className={styles.catTag}>{topic.category_name}</span>
                       <Clock size={11} /> {fmt(topic.created_at)}
@@ -295,9 +296,9 @@ const TopicPage: FC = () => {
                       </KebabMenu>
                     )}
                     <div className={styles.topicHead}>
-                      <Avatar name={r.author_name} src={r.author_avatar} />
+                      <Avatar name={r.author_name} src={r.author_avatar} to={`/usuarios/${r.author_id}`} />
                       <div className={styles.cardMeta}>
-                        <span className={styles.metaText}>{r.author_name}</span>
+                        <Link to={`/usuarios/${r.author_id}`} className={styles.metaTextLink}>{r.author_name}</Link>
                         <span className={styles.metaSub}><Clock size={11} /> {fmt(r.created_at)}</span>
                       </div>
                     </div>

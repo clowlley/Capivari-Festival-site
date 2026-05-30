@@ -160,6 +160,26 @@
   -webkit-box-shadow: 0 0 0px 1000px #16151f inset;
   caret-color: #ffffff;
 }
+.bioWrap { align-items: flex-start; }
+.bioWrap svg { margin-top: 2px; }
+.inputWrap textarea {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  resize: vertical;
+  min-width: 0;
+}
+.bioCounter { font-size: 0.7rem; color: rgba(255,255,255,0.35); text-align: right; }
+.publicLink {
+  display: inline-flex; align-items: center; gap: 6px; width: fit-content;
+  font-size: 0.8rem; color: #c79bff; text-decoration: none; transition: color 0.2s;
+}
+.publicLink:hover { color: #ff4fa3; }
 
 .divider {
   display: flex;

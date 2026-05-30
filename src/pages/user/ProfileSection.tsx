@@ -1,5 +1,6 @@
 import { useRef, useState, type FC } from 'react';
-import { Camera, Mail, User, Lock, Save } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Camera, Mail, User, Lock, Save, FileText, ExternalLink } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/useToast';
 import { authService } from '@/services/auth.service';
@@ -12,6 +13,7 @@ const ProfileSection: FC = () => {
 
   const [name, setName] = useState(user?.name ?? '');
   const [email, setEmail] = useState(user?.email ?? '');
+  const [bio, setBio] = useState(user?.bio ?? '');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
@@ -39,6 +41,7 @@ const ProfileSection: FC = () => {
       const form = new FormData();
       form.append('name', name);
       form.append('email', email);
+      form.append('bio', bio);
       if (newPassword) {
         form.append('currentPassword', currentPassword);
         form.append('newPassword', newPassword);
@@ -120,6 +123,27 @@ const ProfileSection: FC = () => {
                 autoComplete="email"
               />
             </div>
+          </div>
+
+          <div className={styles.field}>
+            <label htmlFor="bio">Bio</label>
+            <div className={`${styles.inputWrap} ${styles.bioWrap}`}>
+              <FileText size={15} />
+              <textarea
+                id="bio"
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+                placeholder="Conte um pouco sobre você para a comunidade…"
+                rows={3}
+                maxLength={500}
+              />
+            </div>
+            <span className={styles.bioCounter}>{bio.length}/500</span>
+            {user && (
+              <Link to={`/usuarios/${user.id}`} className={styles.publicLink}>
+                <ExternalLink size={13} /> Ver meu perfil público
+              </Link>
+            )}
           </div>
 
           <div className={styles.divider}>

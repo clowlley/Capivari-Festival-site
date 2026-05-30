@@ -249,19 +249,19 @@ const ComunidadePage: FC = () => {
                         </button>
                       </KebabMenu>
                     )}
-                    <Link to={`/comunidade/${t.id}`} className={styles.cardLink}>
-                      <div className={styles.cardTop}>
-                        <div className={styles.avatar}>
-                          {t.author_avatar ? <img src={t.author_avatar} alt="" /> : <span>{(t.author_name?.[0] ?? '?').toUpperCase()}</span>}
-                        </div>
-                        <div className={styles.cardWho}>
-                          <span className={styles.author}>{t.author_name}</span>
-                          <span className={styles.metaSub}>
-                            <span className={styles.catTag}>{t.category_name}</span>
-                            <Clock size={11} /> {fmt(t.created_at)}
-                          </span>
-                        </div>
+                    <div className={styles.cardTop}>
+                      <Link to={`/usuarios/${t.author_id}`} className={styles.avatar}>
+                        {t.author_avatar ? <img src={t.author_avatar} alt="" /> : <span>{(t.author_name?.[0] ?? '?').toUpperCase()}</span>}
+                      </Link>
+                      <div className={styles.cardWho}>
+                        <Link to={`/usuarios/${t.author_id}`} className={styles.author}>{t.author_name}</Link>
+                        <span className={styles.metaSub}>
+                          <span className={styles.catTag}>{t.category_name}</span>
+                          <Clock size={11} /> {fmt(t.created_at)}
+                        </span>
                       </div>
+                    </div>
+                    <Link to={`/comunidade/${t.id}`} className={styles.cardLink}>
                       <h3 className={styles.cardTitle}>{t.title}</h3>
                     </Link>
                     <ClampText text={t.content} className={styles.cardExcerpt} />
@@ -287,13 +287,15 @@ const ComunidadePage: FC = () => {
             ) : (
               <ul className={styles.memberList}>
                 {members.map((m, i) => (
-                  <li key={m.id} className={styles.member}>
-                    <span className={styles.rank}>{i === 0 ? <Trophy size={14} /> : i + 1}</span>
-                    <div className={styles.memberAvatar}>
-                      {m.avatar_url ? <img src={m.avatar_url} alt="" /> : <span>{(m.name?.[0] ?? '?').toUpperCase()}</span>}
-                    </div>
-                    <span className={styles.memberName}>{m.name}</span>
-                    <span className={styles.memberCount}>{m.contributions}</span>
+                  <li key={m.id}>
+                    <Link to={`/usuarios/${m.id}`} className={styles.member}>
+                      <span className={styles.rank}>{i === 0 ? <Trophy size={14} /> : i + 1}</span>
+                      <div className={styles.memberAvatar}>
+                        {m.avatar_url ? <img src={m.avatar_url} alt="" /> : <span>{(m.name?.[0] ?? '?').toUpperCase()}</span>}
+                      </div>
+                      <span className={styles.memberName}>{m.name}</span>
+                      <span className={styles.memberCount}>{m.contributions}</span>
+                    </Link>
                   </li>
                 ))}
               </ul>
