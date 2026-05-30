@@ -1,11 +1,13 @@
-import { useCallback, useEffect, useRef, useState, type FC } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type FC } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import PublicLayout from '@/components/layout/PublicLayout';
-import { ArrowLeft, Heart, MessageSquare, ImagePlus, Send, Clock, Trash2, Pencil, X, Check } from 'lucide-react';
+import { ArrowLeft, Heart, MessageSquare, ImagePlus, Send, Clock, Trash2, Pencil, X, Check, Trophy, Calendar, MapPin } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/useToast';
 import { communityService } from '@/services/community.service';
-import type { TopicDetail, Reply } from '@/types/community.types';
+import { eventService } from '@/services/events.service';
+import type { TopicDetail, Reply, ActiveMember } from '@/types/community.types';
+import type { Event } from '@/types/event.types';
 import KebabMenu from './KebabMenu';
 import styles from './ComunidadePage.module.css';
 
@@ -37,6 +39,8 @@ const TopicPage: FC = () => {
 
   const [topic, setTopic] = useState<TopicDetail | null>(null);
   const [loading, setLoading] = useState(true);
+  const [events, setEvents] = useState<Event[]>([]);
+  const [members, setMembers] = useState<ActiveMember[]>([]);
 
   const [replyText, setReplyText] = useState('');
   const [replyImg, setReplyImg] = useState<File | null>(null);
@@ -67,6 +71,27 @@ const TopicPage: FC = () => {
   }, [topicId]);
 
   useEffect(() => { load(); }, [load]);
+
+  useEffect(() => {
+    eventService.getPublicEvents({ status: 'published', limit: 5 })
+      .then((r) => setEvents(r.data || []))
+      .catch(() => {});
+    communityService.getActiveMembers().then(setMembers).catch(() => {});
+  }, []);
+
+  // Respostas em destaque: as mais curtidas do tópico
+  const topReplies = useMemo(
+    () => (topic ? [...topic.replies].filter((r) => r.like_count > 0).sort((a, b) => b.like_count - a.like_count).slice(0, 3) : []),
+    [topic]
+  );
+
+  // Eventos rolando: próximos por data
+  const liveEvents = useMemo(
+    () => [...events].sort((a, b) => new Date(a.starts_at).getTime() - new Date(b.starts_at).getTime()).slice(0, 4),
+    [events]
+  );
+
+  const fmtEvent = (d: string) => new Date(d).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
 
   const likeTopic = async () => {
     if (!user) return requireLogin();
@@ -143,10 +168,31 @@ const TopicPage: FC = () => {
   return (
     <PublicLayout>
       <div className={styles.page}>
-        <div className={styles.detailWrap}>
-          <Link to="/comunidade" className={styles.backLink}>
-            <ArrowLeft size={15} /> Voltar à comunidade
-          </Link>
+        <div className={styles.detailGrid}>
+          <aside className={styles.detailSide}>
+            {topReplies.length > 0 && (
+              <div className={styles.sideCard}>
+                <h3 className={styles.sideTitle}>Respostas em destaque</h3>
+                {topReplies.map((r) => (
+                  <div key={r.id} className={styles.relItem}>
+                    <div className={styles.relHead}>
+                      <div className={styles.miniAvatar}>
+                        {r.author_avatar ? <img src={r.author_avatar} alt="" /> : <span>{(r.author_name?.[0] ?? '?').toUpperCase()}</span>}
+                      </div>
+                      <span className={styles.relAuthor}>{r.author_name}</span>
+                      <span className={styles.relLikes}><Heart size={12} fill="currentColor" /> {r.like_count}</span>
+                    </div>
+                    <p className={styles.relText}>{r.content}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </aside>
+
+          <div className={styles.detailCenter}>
+            <Link to="/comunidade" className={styles.backLink}>
+              <ArrowLeft size={15} /> Voltar à comunidade
+            </Link>
 
           {loading ? (
             <div className={styles.empty}>Carregando…</div>
@@ -285,6 +331,47 @@ const TopicPage: FC = () => {
               )}
             </>
           )}
+          </div>
+
+          <aside className={styles.detailSide}>
+            {liveEvents.length > 0 && (
+              <div className={styles.sideCard}>
+                <h3 className={styles.sideTitle}>Eventos rolando</h3>
+                {liveEvents.map((ev) => (
+                  <Link key={ev.id} to={`/eventos/${ev.id}`} className={styles.eventItem}>
+                    <div className={styles.eventThumb}>
+                      {ev.cover_image ? <img src={ev.cover_image} alt="" /> : <Calendar size={18} />}
+                    </div>
+                    <div className={styles.eventInfo}>
+                      <span className={styles.eventTitle}>{ev.title}</span>
+                      <span className={styles.eventMeta}>
+                        <Calendar size={11} /> {fmtEvent(ev.starts_at)}
+                        {ev.location_name ? <> · <MapPin size={11} /> {ev.location_name}</> : null}
+                      </span>
+                    </div>
+                  </Link>
+                ))}
+                <Link to="/eventos" className={styles.sideAll}>Ver todos os eventos →</Link>
+              </div>
+            )}
+            {members.length > 0 && (
+              <div className={styles.sideCard}>
+                <h3 className={styles.sideTitle}>Membros mais ativos</h3>
+                <ul className={styles.memberList}>
+                  {members.map((m, i) => (
+                    <li key={m.id} className={styles.member}>
+                      <span className={styles.rank}>{i === 0 ? <Trophy size={14} /> : i + 1}</span>
+                      <div className={styles.memberAvatar}>
+                        {m.avatar_url ? <img src={m.avatar_url} alt="" /> : <span>{(m.name?.[0] ?? '?').toUpperCase()}</span>}
+                      </div>
+                      <span className={styles.memberName}>{m.name}</span>
+                      <span className={styles.memberCount}>{m.contributions}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </aside>
         </div>
       </div>
     </PublicLayout>
