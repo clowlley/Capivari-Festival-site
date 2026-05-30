@@ -9,7 +9,23 @@ export interface UserProfile {
   reply_count: number;
   follower_count: number;
   following_count: number;
+  interaction_count: number;
   is_following: boolean;
+}
+
+export type NotificationType = 'topic_like' | 'reply_like' | 'topic_reply' | 'follow';
+
+export interface AppNotification {
+  id: number;
+  type: NotificationType;
+  topic_id: number | null;
+  reply_id: number | null;
+  read: boolean;
+  created_at: string;
+  actor_id: number | null;
+  actor_name: string | null;
+  actor_avatar: string | null;
+  topic_title: string | null;
 }
 
 export interface FollowResult {

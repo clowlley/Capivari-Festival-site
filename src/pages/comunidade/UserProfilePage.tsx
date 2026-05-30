@@ -9,6 +9,7 @@ import { communityService } from '@/services/community.service';
 import type { UserProfile } from '@/types/user.types';
 import type { Topic } from '@/types/community.types';
 import ClampText from './ClampText';
+import NotificationsBell from './NotificationsBell';
 import styles from './ComunidadePage.module.css';
 
 const fmtDate = (d: string) =>
@@ -91,14 +92,13 @@ const UserProfilePage: FC = () => {
           ) : !profile ? null : (
             <>
               <section className={styles.profileCard}>
-                {isSelf ? (
-                  <div className={styles.profileActions}>
+                <div className={styles.profileActions}>
+                  {user && <NotificationsBell />}
+                  {isSelf ? (
                     <Link to="/painel/perfil" className={`${styles.followBtn} ${styles.followingBtn}`}>
                       Editar perfil
                     </Link>
-                  </div>
-                ) : (
-                  <div className={styles.profileActions}>
+                  ) : (
                     <button
                       className={`${styles.followBtn} ${profile.is_following ? styles.followingBtn : ''}`}
                       onClick={toggleFollow}
@@ -108,8 +108,8 @@ const UserProfilePage: FC = () => {
                         ? <><UserCheck size={16} /> Seguindo</>
                         : <><UserPlus size={16} /> Seguir</>}
                     </button>
-                  </div>
-                )}
+                  )}
+                </div>
 
                 <div className={styles.profileMain}>
                   <div className={styles.profileHead}>
@@ -150,7 +150,11 @@ const UserProfilePage: FC = () => {
                 </div>
 
                 <div className={styles.profileAside}>
-                  {/* espaço reservado — conteúdo futuro */}
+                  <div className={styles.insight}>
+                    <span className={styles.insightNum}>{profile.interaction_count}</span>
+                    <span className={styles.insightLabel}>Interações totais</span>
+                    <span className={styles.insightHint}>tópicos + respostas + curtidas dadas</span>
+                  </div>
                 </div>
               </section>
 
