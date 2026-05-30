@@ -4,6 +4,7 @@ import type { Artist, ArtistPhoto, ArtistVideo, ArtistTrack } from '@/types/arti
 import { artistsService } from '@/services/artists.service';
 import { useToast } from '@/hooks/useToast';
 import { Button } from '@/components/ui/Button';
+import UploadOverlay from '@/components/ui/UploadOverlay';
 import styles from './ArtistForm.module.css';
 
 interface Props {
@@ -24,6 +25,8 @@ const ArtistForm: React.FC<Props> = ({ artist, onSuccess, onCancel }) => {
   const trackInputRef = useRef<HTMLInputElement>(null);
 
   const [loading, setLoading] = useState(false);
+  const [uploadPct, setUploadPct] = useState(0);
+  const [processing, setProcessing] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     project_name: '',
@@ -136,6 +139,8 @@ const ArtistForm: React.FC<Props> = ({ artist, onSuccess, onCancel }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setUploadPct(0);
+    setProcessing(false);
     try {
       const data = new FormData();
       Object.entries(formData).forEach(([k, v]) => data.append(k, String(v)));
@@ -145,11 +150,16 @@ const ArtistForm: React.FC<Props> = ({ artist, onSuccess, onCancel }) => {
       newVideoFiles.forEach(f => data.append('video_files', f));
       newTrackFiles.forEach(f => data.append('track_files', f));
 
+      const onProgress = (pct: number) => {
+        setUploadPct(pct);
+        if (pct >= 100) setProcessing(true);
+      };
+
       if (isEdit && artist?.id) {
-        await artistsService.updateArtist(artist.id, data);
+        await artistsService.updateArtist(artist.id, data, onProgress);
         toast.success('Artista atualizado!');
       } else {
-        await artistsService.createArtist(data);
+        await artistsService.createArtist(data, onProgress);
         toast.success('Artista cadastrado!');
       }
       onSuccess();
@@ -158,6 +168,7 @@ const ArtistForm: React.FC<Props> = ({ artist, onSuccess, onCancel }) => {
       toast.error(err.response?.data?.error || 'Erro ao salvar.');
     } finally {
       setLoading(false);
+      setProcessing(false);
     }
   };
 
@@ -170,6 +181,7 @@ const ArtistForm: React.FC<Props> = ({ artist, onSuccess, onCancel }) => {
 
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
+      <UploadOverlay visible={loading} pct={uploadPct} processing={processing} />
       <div className={styles.grid2}>
         <div className={styles.field}>
           <label>Nome do Artista *</label>

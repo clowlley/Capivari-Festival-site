@@ -195,7 +195,7 @@
 /* ── Sobre ── */
 .aboutSection {
   padding: 80px 24px;
-  background: rgba(255,255,255,0.015);
+  
   border-top: 1px solid rgba(255,255,255,0.06);
   border-bottom: 1px solid rgba(255,255,255,0.06);
 }
@@ -209,7 +209,7 @@
   align-items: center;
 }
 
-.aboutText {}
+
 
 .sectionEye {
   display: block;

@@ -12,13 +12,17 @@ export const artistsService = {
     return res.data;
   },
 
-  async createArtist(data: FormData): Promise<Artist> {
-    const res = await api.post('/artists/admin', data);
+  async createArtist(data: FormData, onProgress?: (pct: number) => void): Promise<Artist> {
+    const res = await api.post('/artists/admin', data, {
+      onUploadProgress: e => onProgress?.(e.total ? Math.round((e.loaded * 100) / e.total) : 0),
+    });
     return res.data;
   },
 
-  async updateArtist(id: number, data: FormData): Promise<Artist> {
-    const res = await api.put(`/artists/admin/${id}`, data);
+  async updateArtist(id: number, data: FormData, onProgress?: (pct: number) => void): Promise<Artist> {
+    const res = await api.put(`/artists/admin/${id}`, data, {
+      onUploadProgress: e => onProgress?.(e.total ? Math.round((e.loaded * 100) / e.total) : 0),
+    });
     return res.data;
   },
 

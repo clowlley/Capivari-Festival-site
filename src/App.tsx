@@ -22,6 +22,7 @@ import ProductsListPage from '@/pages/products/ProductsListPage';
 import ProductsManager from '@/pages/admin/products/ProductsManager';
 import ProjectsManager from '@/pages/admin/projects/ProjectsManager';
 import ProjectsPage from '@/pages/projects/ProjectsPage';
+import ProjectDetailPage from '@/pages/projects/ProjectDetailPage';
 import ArtistsManager from '@/pages/admin/artists/ArtistsManager';
 import SobrePage from '@/pages/sobre/SobrePage';
 import SettingsManager from '@/pages/admin/settings/SettingsManager';
@@ -49,7 +50,7 @@ const App: React.FC = () => {
         <Route path="/artistas" element={<ArtistsPage />} />
         <Route path="/artistas/:id" element={<ArtistDetailPage />} />
         <Route path="/projetos" element={<ProjectsPage />} />
-        <Route path="/projetos/:id" element={<ProjectsPage />} />
+        <Route path="/projetos/:id" element={<ProjectDetailPage />} />
 <Route path="/sobre" element={<SobrePage />} />
         <Route path="/contato" element={<ContatoPage />} />
         <Route path="/galeria" element={<GalleryPage />} />

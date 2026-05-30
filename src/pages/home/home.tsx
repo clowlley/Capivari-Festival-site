@@ -78,7 +78,7 @@ const Hero: React.FC = () => {
         <div className={styles.heroDivider} />
 
         <p className={styles.heroDesc}>
-          O portal de eventos, projetos e cultura da região de Capivari.
+          O portal de eventos, projetos e cultura da região de Minas Gerais.
           Fique por dentro da programação e participe da nossa comunidade.
         </p>
 

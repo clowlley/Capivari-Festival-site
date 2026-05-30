@@ -224,14 +224,13 @@
   align-items: center;
   gap: 10px;
   padding: 12px 14px;
-  background: rgba(255, 255, 255, 0.04);
+  background: #16151f;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
-  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 .inputWrap:focus-within {
-  border-color: rgba(180, 79, 255, 0.5);
-  background: rgba(180, 79, 255, 0.04);
+  border-color: rgba(180, 79, 255, 0.4);
   box-shadow: 0 0 0 4px rgba(180, 79, 255, 0.08);
 }
 .inputWrap svg {
@@ -252,9 +251,17 @@
   font-size: 0.92rem;
   letter-spacing: 0.01em;
 }
-.inputWrap input::placeholder {
-  color: rgba(255, 255, 255, 0.25);
+.inputWrap input:-webkit-autofill,
+.inputWrap input:-webkit-autofill:hover,
+.inputWrap input:-webkit-autofill:focus,
+.inputWrap input:-webkit-autofill:active {
+  -webkit-text-fill-color: #ffffff;
+  -webkit-box-shadow: 0 0 0px 1000px #16151f inset;
+  box-shadow: 0 0 0px 1000px #16151f inset;
+  caret-color: #ffffff;
 }
+
+
 
 /* ── Submit com borda RGB ── */
 .submit {

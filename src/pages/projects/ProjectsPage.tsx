@@ -1,77 +1,10 @@
 import { useState, useEffect, useCallback, type FC } from 'react';
-import { Search, X, Filter, ExternalLink } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Search, X, Filter, Star, ArrowRight, Play, FolderOpen, AlignLeft } from 'lucide-react';
 import { projectService } from '@/services/projects.service';
 import type { Project } from '@/types/project.types';
 import PublicLayout from '@/components/layout/PublicLayout';
-import { safeUrl } from '@/utils/security';
 import styles from './ProjectsPage.module.css';
-
-/* ── Video embed helper ──────────────────────────────────── */
-function getYouTubeId(url: string) {
-  return url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([^&\s?]+)/)?.[1] ?? null;
-}
-function getVimeoId(url: string) {
-  return url.match(/vimeo\.com\/(\d+)/)?.[1] ?? null;
-}
-
-const VideoPlayer: FC<{ url: string }> = ({ url }) => {
-  const ytId = getYouTubeId(url);
-  if (ytId) return (
-    <iframe
-      className={styles.videoFrame}
-      src={`https://www.youtube.com/embed/${ytId}`}
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-      allowFullScreen
-    />
-  );
-  const vimeoId = getVimeoId(url);
-  if (vimeoId) return (
-    <iframe
-      className={styles.videoFrame}
-      src={`https://player.vimeo.com/video/${vimeoId}`}
-      allow="autoplay; fullscreen; picture-in-picture"
-      allowFullScreen
-    />
-  );
-  return <video src={url} controls className={styles.videoFrame} />;
-};
-
-/* ── Detail Modal ────────────────────────────────────────── */
-const DetailModal: FC<{ project: Project; onClose: () => void }> = ({ project, onClose }) => (
-  <div className={styles.backdrop} onClick={onClose}>
-    <div className={styles.modal} onClick={e => e.stopPropagation()}>
-      <button className={styles.closeBtn} onClick={onClose}><X size={18} /></button>
-
-      {project.cover_image && !project.video_url && (
-        <div className={styles.modalImg}>
-          <img src={project.cover_image} alt={project.title} />
-        </div>
-      )}
-
-      {project.video_url && (
-        <div className={styles.videoWrap}>
-          <VideoPlayer url={project.video_url} />
-        </div>
-      )}
-
-      <div className={styles.modalBody}>
-        {project.category && <span className={styles.catPill}>{project.category}</span>}
-        <h2 className={styles.modalTitle}>{project.title}</h2>
-        <p className={styles.modalDesc}>{project.description}</p>
-        {project.full_content && (
-          <div className={styles.fullContent}>
-            <p>{project.full_content}</p>
-          </div>
-        )}
-        {project.video_url && (
-          <a href={safeUrl(project.video_url)} target="_blank" rel="noopener noreferrer" className={styles.extLink}>
-            <ExternalLink size={13} /> Abrir vídeo
-          </a>
-        )}
-      </div>
-    </div>
-  </div>
-);
 
 /* ── Card ────────────────────────────────────────────────── */
 const ProjectCard: FC<{ project: Project; onOpen: (p: Project) => void }> = ({ project, onOpen }) => (
@@ -83,16 +16,22 @@ const ProjectCard: FC<{ project: Project; onOpen: (p: Project) => void }> = ({ p
         loading="lazy"
       />
       <div className={styles.cardOverlay} />
-      {project.featured && <span className={styles.featBadge}>Destaque</span>}
-      {project.video_url && <span className={styles.videoBadge}>▶ Vídeo</span>}
+      {project.featured && <span className={styles.featBadge}><Star size={11} fill="currentColor" /> Destaque</span>}
+      {project.video_url && <span className={styles.videoBadge}><Play size={11} fill="currentColor" /> Vídeo</span>}
     </div>
     <div className={styles.cardBody}>
       {project.category && <span className={styles.catTag}>{project.category}</span>}
-      <h3 className={styles.cardTitle}>{project.title}</h3>
-      <p className={styles.cardDesc}>{project.description}</p>
+      <h3 className={styles.cardTitle}>
+        <FolderOpen size={15} className={styles.cardTitleIcon} />
+        {project.title}
+      </h3>
+      <p className={styles.cardDesc}>
+        <AlignLeft size={13} className={styles.cardDescIcon} />
+        <span className={styles.cardDescText}>{project.description}</span>
+      </p>
     </div>
     <div className={styles.cardFoot}>
-      <span className={styles.cardCta}>Ver projeto →</span>
+      <span className={styles.cardCta}>Ver projeto <ArrowRight size={14} className={styles.cardCtaArrow} /></span>
     </div>
   </article>
 );
@@ -103,6 +42,7 @@ const Skeleton: FC = () => <div className={styles.skelCard} />;
 const LIMIT = 12;
 
 const ProjectsPage: FC = () => {
+  const navigate = useNavigate();
   const [projects, setProjects]         = useState<Project[]>([]);
   const [filtered, setFiltered]         = useState<Project[]>([]);
   const [categories, setCategories]     = useState<string[]>([]);
@@ -110,7 +50,6 @@ const ProjectsPage: FC = () => {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [loading, setLoading]           = useState(true);
   const [page, setPage]                 = useState(1);
-  const [detail, setDetail]             = useState<Project | null>(null);
 
   useEffect(() => {
     projectService.getPublicProjects({ limit: 200 })
@@ -207,7 +146,7 @@ const ProjectsPage: FC = () => {
             {loading
               ? Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} />)
               : paginated.length > 0
-                ? paginated.map(p => <ProjectCard key={p.id} project={p} onOpen={setDetail} />)
+                ? paginated.map(p => <ProjectCard key={p.id} project={p} onOpen={() => navigate(`/projetos/${p.id}`)} />)
                 : (
                   <div className={styles.empty}>
                     <p>Nenhum projeto encontrado.</p>
@@ -234,8 +173,6 @@ const ProjectsPage: FC = () => {
           )}
         </div>
       </div>
-
-      {detail && <DetailModal project={detail} onClose={() => setDetail(null)} />}
     </PublicLayout>
   );
 };
