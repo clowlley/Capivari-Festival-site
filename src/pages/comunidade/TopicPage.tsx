@@ -1,13 +1,19 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type FC } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import PublicLayout from '@/components/layout/PublicLayout';
-import { ArrowLeft, Heart, MessageSquare, ImagePlus, Send, Clock, Trash2, Pencil, X, Check, Trophy, Calendar, MapPin } from 'lucide-react';
+import { ArrowLeft, Heart, MessageSquare, ImagePlus, Send, Clock, Trash2, Pencil, X, Check, Calendar, MapPin, Music, ShoppingBag, Briefcase, ChevronRight } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/useToast';
 import { communityService } from '@/services/community.service';
 import { eventService } from '@/services/events.service';
-import type { TopicDetail, Reply, ActiveMember } from '@/types/community.types';
+import { artistsService } from '@/services/artists.service';
+import { projectService } from '@/services/projects.service';
+import { productService } from '@/services/products.service';
+import type { TopicDetail, Reply } from '@/types/community.types';
 import type { Event } from '@/types/event.types';
+import type { Artist } from '@/types/artist.types';
+import type { Project } from '@/types/project.types';
+import type { Product } from '@/types/product.types';
 import KebabMenu from './KebabMenu';
 import styles from './ComunidadePage.module.css';
 
@@ -40,7 +46,9 @@ const TopicPage: FC = () => {
   const [topic, setTopic] = useState<TopicDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [events, setEvents] = useState<Event[]>([]);
-  const [members, setMembers] = useState<ActiveMember[]>([]);
+  const [artists, setArtists] = useState<Artist[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
 
   const [replyText, setReplyText] = useState('');
   const [replyImg, setReplyImg] = useState<File | null>(null);
@@ -73,25 +81,25 @@ const TopicPage: FC = () => {
   useEffect(() => { load(); }, [load]);
 
   useEffect(() => {
-    eventService.getPublicEvents({ status: 'published', limit: 5 })
-      .then((r) => setEvents(r.data || []))
-      .catch(() => {});
-    communityService.getActiveMembers().then(setMembers).catch(() => {});
+    eventService.getPublicEvents({ status: 'published', limit: 6 }).then((r) => setEvents(r.data || [])).catch(() => {});
+    artistsService.getPublicArtists().then(setArtists).catch(() => {});
+    projectService.getPublicProjects({ limit: 6 }).then((r) => setProjects(r.data || [])).catch(() => {});
+    productService.getPublicProducts({ limit: 6 }).then((r) => setProducts(r.data || [])).catch(() => {});
   }, []);
-
-  // Respostas em destaque: as mais curtidas do tópico
-  const topReplies = useMemo(
-    () => (topic ? [...topic.replies].filter((r) => r.like_count > 0).sort((a, b) => b.like_count - a.like_count).slice(0, 3) : []),
-    [topic]
-  );
 
   // Eventos rolando: próximos por data
   const liveEvents = useMemo(
-    () => [...events].sort((a, b) => new Date(a.starts_at).getTime() - new Date(b.starts_at).getTime()).slice(0, 4),
+    () => [...events].sort((a, b) => new Date(a.starts_at).getTime() - new Date(b.starts_at).getTime()).slice(0, 3),
     [events]
   );
+  const topArtists = useMemo(() => artists.slice(0, 4), [artists]);
+  const topProjects = useMemo(() => projects.slice(0, 3), [projects]);
+  const topProducts = useMemo(() => products.slice(0, 3), [products]);
 
   const fmtEvent = (d: string) => new Date(d).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
+  const fmtPrice = (v: number) => Number(v) > 0
+    ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(v))
+    : 'Sob consulta';
 
   const likeTopic = async () => {
     if (!user) return requireLogin();
@@ -168,32 +176,57 @@ const TopicPage: FC = () => {
   return (
     <PublicLayout>
       <div className={styles.page}>
+        <Link to="/comunidade" className={styles.backLink}>
+          <ArrowLeft size={15} /> Voltar à comunidade
+        </Link>
+
         <div className={styles.detailGrid}>
           <aside className={styles.detailSide}>
-            {topReplies.length > 0 && (
+            {topArtists.length > 0 && (
               <div className={styles.sideCard}>
-                <h3 className={styles.sideTitle}>Respostas em destaque</h3>
-                {topReplies.map((r) => (
-                  <div key={r.id} className={styles.relItem}>
-                    <div className={styles.relHead}>
-                      <div className={styles.miniAvatar}>
-                        {r.author_avatar ? <img src={r.author_avatar} alt="" /> : <span>{(r.author_name?.[0] ?? '?').toUpperCase()}</span>}
-                      </div>
-                      <span className={styles.relAuthor}>{r.author_name}</span>
-                      <span className={styles.relLikes}><Heart size={12} fill="currentColor" /> {r.like_count}</span>
+                <div className={styles.sideHead}>
+                  <h3 className={styles.sideTitle}><Music size={13} /> Artistas</h3>
+                  <Link to="/artistas" className={styles.sideMore}>ver todos <ChevronRight size={12} /></Link>
+                </div>
+                {topArtists.map((a) => (
+                  <Link key={a.id} to={`/artistas/${a.id}`} className={styles.mediaItem}>
+                    <div className={styles.mediaThumb}>
+                      {a.profile_image || a.cover_image
+                        ? <img src={a.profile_image || a.cover_image} alt="" />
+                        : <Music size={16} />}
                     </div>
-                    <p className={styles.relText}>{r.content}</p>
-                  </div>
+                    <div className={styles.mediaInfo}>
+                      <span className={styles.mediaTitle}>{a.name}</span>
+                      {(a.project_name || a.musical_styles) && (
+                        <span className={styles.mediaSub}>{a.project_name || a.musical_styles}</span>
+                      )}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+            {topProjects.length > 0 && (
+              <div className={styles.sideCard}>
+                <div className={styles.sideHead}>
+                  <h3 className={styles.sideTitle}><Briefcase size={13} /> Projetos</h3>
+                  <Link to="/projetos" className={styles.sideMore}>ver todos <ChevronRight size={12} /></Link>
+                </div>
+                {topProjects.map((p) => (
+                  <Link key={p.id} to={`/projetos/${p.id}`} className={styles.mediaItem}>
+                    <div className={styles.mediaThumb}>
+                      {p.cover_image ? <img src={p.cover_image} alt="" /> : <Briefcase size={16} />}
+                    </div>
+                    <div className={styles.mediaInfo}>
+                      <span className={styles.mediaTitle}>{p.title}</span>
+                      {p.category && <span className={styles.mediaSub}>{p.category}</span>}
+                    </div>
+                  </Link>
                 ))}
               </div>
             )}
           </aside>
 
           <div className={styles.detailCenter}>
-            <Link to="/comunidade" className={styles.backLink}>
-              <ArrowLeft size={15} /> Voltar à comunidade
-            </Link>
-
           {loading ? (
             <div className={styles.empty}>Carregando…</div>
           ) : !topic ? null : (
@@ -336,39 +369,43 @@ const TopicPage: FC = () => {
           <aside className={styles.detailSide}>
             {liveEvents.length > 0 && (
               <div className={styles.sideCard}>
-                <h3 className={styles.sideTitle}>Eventos rolando</h3>
+                <div className={styles.sideHead}>
+                  <h3 className={styles.sideTitle}><Calendar size={13} /> Eventos rolando</h3>
+                  <Link to="/eventos" className={styles.sideMore}>ver todos <ChevronRight size={12} /></Link>
+                </div>
                 {liveEvents.map((ev) => (
-                  <Link key={ev.id} to={`/eventos/${ev.id}`} className={styles.eventItem}>
-                    <div className={styles.eventThumb}>
-                      {ev.cover_image ? <img src={ev.cover_image} alt="" /> : <Calendar size={18} />}
+                  <Link key={ev.id} to={`/eventos/${ev.id}`} className={styles.mediaItem}>
+                    <div className={styles.mediaThumb}>
+                      {ev.cover_image ? <img src={ev.cover_image} alt="" /> : <Calendar size={16} />}
                     </div>
-                    <div className={styles.eventInfo}>
-                      <span className={styles.eventTitle}>{ev.title}</span>
-                      <span className={styles.eventMeta}>
+                    <div className={styles.mediaInfo}>
+                      <span className={styles.mediaTitle}>{ev.title}</span>
+                      <span className={styles.mediaSub}>
                         <Calendar size={11} /> {fmtEvent(ev.starts_at)}
                         {ev.location_name ? <> · <MapPin size={11} /> {ev.location_name}</> : null}
                       </span>
                     </div>
                   </Link>
                 ))}
-                <Link to="/eventos" className={styles.sideAll}>Ver todos os eventos →</Link>
               </div>
             )}
-            {members.length > 0 && (
+            {topProducts.length > 0 && (
               <div className={styles.sideCard}>
-                <h3 className={styles.sideTitle}>Membros mais ativos</h3>
-                <ul className={styles.memberList}>
-                  {members.map((m, i) => (
-                    <li key={m.id} className={styles.member}>
-                      <span className={styles.rank}>{i === 0 ? <Trophy size={14} /> : i + 1}</span>
-                      <div className={styles.memberAvatar}>
-                        {m.avatar_url ? <img src={m.avatar_url} alt="" /> : <span>{(m.name?.[0] ?? '?').toUpperCase()}</span>}
-                      </div>
-                      <span className={styles.memberName}>{m.name}</span>
-                      <span className={styles.memberCount}>{m.contributions}</span>
-                    </li>
-                  ))}
-                </ul>
+                <div className={styles.sideHead}>
+                  <h3 className={styles.sideTitle}><ShoppingBag size={13} /> Produtos</h3>
+                  <Link to="/produtos" className={styles.sideMore}>ver todos <ChevronRight size={12} /></Link>
+                </div>
+                {topProducts.map((pr) => (
+                  <Link key={pr.id} to="/produtos" className={styles.mediaItem}>
+                    <div className={styles.mediaThumb}>
+                      {pr.cover_image ? <img src={pr.cover_image} alt="" /> : <ShoppingBag size={16} />}
+                    </div>
+                    <div className={styles.mediaInfo}>
+                      <span className={styles.mediaTitle}>{pr.title}</span>
+                      <span className={styles.mediaPrice}>{fmtPrice(pr.price)}</span>
+                    </div>
+                  </Link>
+                ))}
               </div>
             )}
           </aside>

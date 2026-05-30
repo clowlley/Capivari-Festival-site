@@ -329,7 +329,7 @@ textarea.input { resize: vertical; line-height: 1.55; }
   align-items: start;
 }
 .detailCenter { min-width: 0; }
-.detailSide { position: sticky; top: 84px; display: flex; flex-direction: column; gap: 16px; }
+.detailSide { position: sticky; top: 84px; align-self: start; display: flex; flex-direction: column; gap: 16px; }
 
 .sideCard {
   background: rgba(255,255,255,0.03);
@@ -338,12 +338,47 @@ textarea.input { resize: vertical; line-height: 1.55; }
   padding: 16px;
   text-align: left;
 }
+.sideHead { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
 .sideTitle {
-  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
-  color: rgba(255,255,255,0.45); margin: 0 0 12px;
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: rgba(255,255,255,0.5); margin: 0;
 }
+.sideTitle svg { color: #b44fff; }
+.sideMore {
+  display: inline-flex; align-items: center; gap: 1px;
+  font-size: 0.72rem; color: rgba(255,255,255,0.4); text-decoration: none; flex-shrink: 0;
+  transition: color 0.2s;
+}
+.sideMore:hover { color: #c79bff; }
 .sideAll { display: inline-block; margin-top: 10px; font-size: 0.8rem; color: #c79bff; text-decoration: none; }
 .sideAll:hover { text-decoration: underline; }
+
+/* item de mídia (artistas / projetos / eventos / produtos) — padrão único */
+.mediaItem {
+  display: flex; align-items: center; gap: 11px;
+  padding: 9px 0; text-decoration: none;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.mediaItem:first-of-type { border-top: none; padding-top: 0; }
+.mediaThumb {
+  width: 46px; height: 46px; border-radius: 9px; flex-shrink: 0; overflow: hidden;
+  background: rgba(180,79,255,0.13); color: #c79bff;
+  display: flex; align-items: center; justify-content: center;
+}
+.mediaThumb img { width: 100%; height: 100%; object-fit: cover; }
+.mediaInfo { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.mediaTitle {
+  font-size: 0.84rem; font-weight: 600; color: #fff; line-height: 1.25;
+  display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.mediaSub {
+  display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap;
+  font-size: 0.72rem; color: rgba(255,255,255,0.45);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.mediaPrice { font-size: 0.76rem; font-weight: 700; color: #4ade80; }
+.mediaItem:hover .mediaTitle { color: #c79bff; }
 
 /* respostas em destaque */
 .relItem { padding: 10px 0; border-top: 1px solid rgba(255,255,255,0.06); }
