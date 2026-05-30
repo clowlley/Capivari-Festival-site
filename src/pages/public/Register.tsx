@@ -33,7 +33,7 @@ const Register: FC = () => {
       const { token, admin } = await authService.register({ name, email, password });
       login(token, admin);
       toast.success('Conta criada com sucesso!');
-      navigate('/conta');
+      navigate('/painel');
     } catch (error) {
       const err = error as { response?: { data?: { error?: string } } };
       toast.error(err.response?.data?.error || 'Erro ao criar conta. Tente novamente.');

@@ -6,7 +6,9 @@ import 'react-toastify/dist/ReactToastify.css';
 // Importando componentes da nova estrutura (usando alias @)
 import Login from '@/pages/public/Login';
 import Register from '@/pages/public/Register';
-import AccountPage from '@/pages/account/AccountPage';
+import UserDashboard from '@/pages/user/UserDashboard';
+import ProfileSection from '@/pages/user/ProfileSection';
+import ComunidadeSection from '@/pages/user/ComunidadeSection';
 import Home from '@/pages/home/home';
 import EventsListPage from '@/pages/events/EventsListPage';
 import EventDetailPage from '@/pages/events/EventDetailPage';
@@ -47,14 +49,15 @@ const App: React.FC = () => {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Register />} />
-        <Route
-          path="/conta"
-          element={
-            <ProtectedRoute requireAdmin={false}>
-              <AccountPage />
-            </ProtectedRoute>
-          }
-        />
+
+        {/* Dashboard do usuário comum (sem funções de admin) */}
+        <Route path="/painel" element={<ProtectedRoute requireAdmin={false} />}>
+          <Route element={<UserDashboard />}>
+            <Route index element={<ProfileSection />} />
+            <Route path="perfil" element={<ProfileSection />} />
+            <Route path="comunidade" element={<ComunidadeSection />} />
+          </Route>
+        </Route>
         <Route path="/eventos" element={<EventsListPage />} />
         <Route path="/eventos/:id" element={<EventDetailPage />} />
         <Route path="/produtos" element={<ProductsListPage />} />

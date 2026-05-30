@@ -23,7 +23,7 @@ const Login: FC = () => {
       const { token, admin } = await authService.login({ email, password });
       login(token, admin);
       toast.success('Login realizado com sucesso!');
-      navigate(admin.role === 'user' ? '/' : '/admin');
+      navigate(admin.role === 'user' ? '/painel' : '/admin');
     } catch (error) {
       const err = error as { response?: { data?: { error?: string } } };
       toast.error(err.response?.data?.error || 'Erro ao realizar login. Tente novamente.');

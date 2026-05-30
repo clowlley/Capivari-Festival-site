@@ -37,7 +37,7 @@ const PublicNavbar: React.FC = () => {
       <div className={styles.userArea}>
         {user ? (
           <span className={styles.userRow}>
-            <Link to={user.role === 'admin' ? '/admin' : '#'} className={styles.navCta} onClick={close}>
+            <Link to={user.role === 'admin' ? '/admin' : '/painel'} className={styles.navCta} onClick={close}>
               {user.name}
             </Link>
             <button className={styles.logoutBtn} onClick={() => { logout(); close(); }}>Sair</button>
