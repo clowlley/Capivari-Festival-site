@@ -24,6 +24,21 @@ export const communityService = {
     return data;
   },
 
+  // ── Categorias (admin) ──
+  async createCategory(payload: { name: string; description?: string }): Promise<Category> {
+    const { data } = await api.post('/community/categories', payload);
+    return data;
+  },
+
+  async updateCategory(id: number, payload: { name?: string; description?: string; position?: number }): Promise<Category> {
+    const { data } = await api.put(`/community/categories/${id}`, payload);
+    return data;
+  },
+
+  async deleteCategory(id: number): Promise<void> {
+    await api.delete(`/community/categories/${id}`);
+  },
+
   async createTopic(form: FormData): Promise<{ id: number; status: string }> {
     const { data } = await api.post('/community/topics', form);
     return data;

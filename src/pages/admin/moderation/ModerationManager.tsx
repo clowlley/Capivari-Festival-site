@@ -1,8 +1,8 @@
 import { useEffect, useState, type FC } from 'react';
-import { ShieldCheck, Check, X, Clock, Mail } from 'lucide-react';
+import { ShieldCheck, Check, X, Clock, Mail, Tag, Plus, Pencil, Trash2, Save } from 'lucide-react';
 import { useToast } from '@/hooks/useToast';
 import { communityService } from '@/services/community.service';
-import type { PendingTopic } from '@/types/community.types';
+import type { PendingTopic, Category } from '@/types/community.types';
 import styles from './ModerationManager.module.css';
 
 const fmt = (d: string) =>
@@ -13,6 +13,15 @@ const ModerationManager: FC = () => {
   const [items, setItems] = useState<PendingTopic[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<number | null>(null);
+
+  // Categorias
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [newName, setNewName] = useState('');
+  const [newDesc, setNewDesc] = useState('');
+  const [adding, setAdding] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editName, setEditName] = useState('');
+  const [editDesc, setEditDesc] = useState('');
 
   const load = async () => {
     setLoading(true);
@@ -25,7 +34,19 @@ const ModerationManager: FC = () => {
     }
   };
 
-  useEffect(() => { load(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, []);
+  const loadCategories = async () => {
+    try {
+      setCategories(await communityService.getCategories());
+    } catch {
+      toast.error('Erro ao carregar categorias.');
+    }
+  };
+
+  useEffect(() => {
+    load();
+    loadCategories();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const approve = async (id: number) => {
     setBusy(id);
@@ -48,6 +69,56 @@ const ModerationManager: FC = () => {
     finally { setBusy(null); }
   };
 
+  // ── Categorias ──
+  const addCategory = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newName.trim()) return;
+    setAdding(true);
+    try {
+      const cat = await communityService.createCategory({ name: newName.trim(), description: newDesc.trim() || undefined });
+      setCategories((prev) => [...prev, cat]);
+      setNewName('');
+      setNewDesc('');
+      toast.success('Categoria criada.');
+    } catch (err) {
+      const e2 = err as { response?: { data?: { error?: string } } };
+      toast.error(e2.response?.data?.error || 'Erro ao criar categoria.');
+    } finally {
+      setAdding(false);
+    }
+  };
+
+  const startEdit = (c: Category) => {
+    setEditingId(c.id);
+    setEditName(c.name);
+    setEditDesc(c.description ?? '');
+  };
+
+  const saveEdit = async (id: number) => {
+    if (!editName.trim()) return;
+    try {
+      const updated = await communityService.updateCategory(id, { name: editName.trim(), description: editDesc.trim() });
+      setCategories((prev) => prev.map((c) => (c.id === id ? updated : c)));
+      setEditingId(null);
+      toast.success('Categoria atualizada.');
+    } catch (err) {
+      const e2 = err as { response?: { data?: { error?: string } } };
+      toast.error(e2.response?.data?.error || 'Erro ao salvar.');
+    }
+  };
+
+  const removeCategory = async (c: Category) => {
+    const warn = c.topic_count > 0
+      ? `A categoria "${c.name}" tem ${c.topic_count} tópico(s). Excluir vai APAGAR esses tópicos também. Continuar?`
+      : `Excluir a categoria "${c.name}"?`;
+    if (!confirm(warn)) return;
+    try {
+      await communityService.deleteCategory(c.id);
+      setCategories((prev) => prev.filter((x) => x.id !== c.id));
+      toast.success('Categoria excluída.');
+    } catch { toast.error('Erro ao excluir categoria.'); }
+  };
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.header}>
@@ -62,6 +133,66 @@ const ModerationManager: FC = () => {
         </div>
       </div>
 
+      {/* ── Gerenciar categorias ── */}
+      <section className={styles.panel}>
+        <h2 className={styles.panelTitle}><Tag size={16} /> Categorias da comunidade</h2>
+
+        <form className={styles.catForm} onSubmit={addCategory}>
+          <input
+            className={styles.catInput}
+            placeholder="Nome da categoria"
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+            maxLength={120}
+          />
+          <input
+            className={styles.catInput}
+            placeholder="Descrição (opcional)"
+            value={newDesc}
+            onChange={(e) => setNewDesc(e.target.value)}
+          />
+          <button type="submit" className={styles.catAdd} disabled={adding || !newName.trim()}>
+            <Plus size={16} /> Adicionar
+          </button>
+        </form>
+
+        {categories.length === 0 ? (
+          <p className={styles.catEmpty}>Nenhuma categoria ainda.</p>
+        ) : (
+          <ul className={styles.catList}>
+            {categories.map((c) => (
+              <li key={c.id} className={styles.catRow}>
+                {editingId === c.id ? (
+                  <div className={styles.catEdit}>
+                    <input className={styles.catInput} value={editName} onChange={(e) => setEditName(e.target.value)} maxLength={120} />
+                    <input className={styles.catInput} value={editDesc} onChange={(e) => setEditDesc(e.target.value)} placeholder="Descrição (opcional)" />
+                    <button className={styles.iconBtn} onClick={() => saveEdit(c.id)} aria-label="Salvar"><Save size={15} /></button>
+                    <button className={styles.iconBtn} onClick={() => setEditingId(null)} aria-label="Cancelar"><X size={15} /></button>
+                  </div>
+                ) : (
+                  <>
+                    <div className={styles.catMain}>
+                      <span className={styles.catName}>{c.name}</span>
+                      <span className={styles.catMeta}>
+                        <code className={styles.catSlug}>/{c.slug}</code>
+                        <span className={styles.catCount}>{c.topic_count} tópico(s)</span>
+                        {c.description && <span className={styles.catDesc}>· {c.description}</span>}
+                      </span>
+                    </div>
+                    <div className={styles.catRowActions}>
+                      <button className={styles.iconBtn} onClick={() => startEdit(c)} aria-label="Editar"><Pencil size={15} /></button>
+                      <button className={`${styles.iconBtn} ${styles.iconDanger}`} onClick={() => removeCategory(c)} aria-label="Excluir"><Trash2 size={15} /></button>
+                    </div>
+                  </>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      {/* ── Fila de moderação ── */}
+      <h2 className={styles.panelTitle}><ShieldCheck size={16} /> Tópicos aguardando aprovação</h2>
       {loading ? (
         <div className={styles.empty}>Carregando…</div>
       ) : items.length === 0 ? (
