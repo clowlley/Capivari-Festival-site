@@ -30,6 +30,7 @@ const PublicNavbar: React.FC = () => {
         <li><Link to="/projetos" onClick={close} className={isActive('/projetos') ? styles.active : ''}>Projetos</Link></li>
         <li><Link to="/produtos" onClick={close} className={isActive('/produtos') ? styles.active : ''}>Produtos</Link></li>
         <li><Link to="/galeria" onClick={close} className={isActive('/galeria') ? styles.active : ''}>Galeria</Link></li>
+        <li><Link to="/comunidade" onClick={close} className={isActive('/comunidade') ? styles.active : ''}>Comunidade</Link></li>
         <li><Link to="/sobre" onClick={close} className={isActive('/sobre') ? styles.active : ''}>Sobre</Link></li>
         <li><Link to="/contato" onClick={close} className={isActive('/contato') ? styles.active : ''}>Contato</Link></li>
       </ul>

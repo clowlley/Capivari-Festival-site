@@ -7,7 +7,7 @@ import logo from '@/assets/capivarilogo.png';
 const UserSidebar: React.FC = () => {
   const menuItems = [
     { path: '/painel/perfil', icon: FiUser, label: 'Perfil' },
-    { path: '/painel/comunidade', icon: FiUsers, label: 'Comunidade' },
+    { path: '/comunidade', icon: FiUsers, label: 'Comunidade' },
   ];
 
   return (

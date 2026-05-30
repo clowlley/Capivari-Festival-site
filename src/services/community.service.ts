@@ -1,5 +1,5 @@
 import api from './api';
-import type { Category, Topic, TopicDetail, PendingTopic, LikeResult } from '@/types/community.types';
+import type { Category, Topic, TopicDetail, PendingTopic, LikeResult, ActiveMember } from '@/types/community.types';
 
 export const communityService = {
   async getCategories(): Promise<Category[]> {
@@ -16,6 +16,11 @@ export const communityService = {
 
   async getTopic(id: number | string): Promise<TopicDetail> {
     const { data } = await api.get(`/community/topics/${id}`);
+    return data;
+  },
+
+  async getActiveMembers(): Promise<ActiveMember[]> {
+    const { data } = await api.get('/community/members/active');
     return data;
   },
 

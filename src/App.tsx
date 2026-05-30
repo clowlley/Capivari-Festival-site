@@ -8,8 +8,8 @@ import Login from '@/pages/public/Login';
 import Register from '@/pages/public/Register';
 import UserDashboard from '@/pages/user/UserDashboard';
 import ProfileSection from '@/pages/user/ProfileSection';
-import ComunidadeSection from '@/pages/user/ComunidadeSection';
-import TopicDetail from '@/pages/user/TopicDetail';
+import ComunidadePage from '@/pages/comunidade/ComunidadePage';
+import TopicPage from '@/pages/comunidade/TopicPage';
 import Home from '@/pages/home/home';
 import EventsListPage from '@/pages/events/EventsListPage';
 import EventDetailPage from '@/pages/events/EventDetailPage';
@@ -57,10 +57,13 @@ const App: React.FC = () => {
           <Route element={<UserDashboard />}>
             <Route index element={<ProfileSection />} />
             <Route path="perfil" element={<ProfileSection />} />
-            <Route path="comunidade" element={<ComunidadeSection />} />
-            <Route path="comunidade/:topicId" element={<TopicDetail />} />
           </Route>
         </Route>
+
+        {/* Comunidade (página pública) */}
+        <Route path="/comunidade" element={<ComunidadePage />} />
+        <Route path="/comunidade/:topicId" element={<TopicPage />} />
+
         <Route path="/eventos" element={<EventsListPage />} />
         <Route path="/eventos/:id" element={<EventDetailPage />} />
         <Route path="/produtos" element={<ProductsListPage />} />

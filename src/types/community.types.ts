@@ -61,3 +61,10 @@ export interface LikeResult {
   liked: boolean;
   like_count: number;
 }
+
+export interface ActiveMember {
+  id: number;
+  name: string;
+  avatar_url: string | null;
+  contributions: number;
+}

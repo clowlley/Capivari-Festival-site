@@ -9,5 +9,6 @@ export const useToast = () => {
   return {
     success: (msg: string) => toast.success(msg, defaultOptions),
     error: (msg: string) => toast.error(msg, defaultOptions),
+    info: (msg: string) => toast.info(msg, defaultOptions),
   };
 };
