@@ -6,6 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/useToast';
 import { communityService } from '@/services/community.service';
 import type { TopicDetail, Reply } from '@/types/community.types';
+import KebabMenu from './KebabMenu';
 import styles from './ComunidadePage.module.css';
 
 const MAX_POST = 20000;
@@ -152,6 +153,16 @@ const TopicPage: FC = () => {
           ) : !topic ? null : (
             <>
               <article className={styles.topicCard}>
+                {isOwner(topic.author_id) && !editingTopic && (
+                  <KebabMenu>
+                    <button className={styles.kebabItem} onClick={() => { setEditingTopic(true); setEditTitle(topic.title); setEditContent(topic.content); }}>
+                      <Pencil size={14} /> Editar
+                    </button>
+                    <button className={`${styles.kebabItem} ${styles.kebabDanger}`} onClick={delTopic}>
+                      <Trash2 size={14} /> Excluir
+                    </button>
+                  </KebabMenu>
+                )}
                 <div className={styles.topicHead}>
                   <Avatar name={topic.author_name} src={topic.author_avatar} />
                   <div className={styles.cardMeta}>
@@ -161,12 +172,6 @@ const TopicPage: FC = () => {
                       <Clock size={11} /> {fmt(topic.created_at)}
                     </span>
                   </div>
-                  {isOwner(topic.author_id) && !editingTopic && (
-                    <div className={styles.ownerActions}>
-                      <button onClick={() => { setEditingTopic(true); setEditTitle(topic.title); setEditContent(topic.content); }} aria-label="Editar"><Pencil size={15} /></button>
-                      <button onClick={delTopic} aria-label="Excluir"><Trash2 size={15} /></button>
-                    </div>
-                  )}
                 </div>
 
                 {editingTopic ? (
@@ -199,18 +204,22 @@ const TopicPage: FC = () => {
               <div className={styles.replies}>
                 {topic.replies.map((r) => (
                   <div key={r.id} className={styles.replyCard}>
+                    {isOwner(r.author_id) && editingReply !== r.id && (
+                      <KebabMenu>
+                        <button className={styles.kebabItem} onClick={() => { setEditingReply(r.id); setEditReplyText(r.content); }}>
+                          <Pencil size={14} /> Editar
+                        </button>
+                        <button className={`${styles.kebabItem} ${styles.kebabDanger}`} onClick={() => delReply(r.id)}>
+                          <Trash2 size={14} /> Excluir
+                        </button>
+                      </KebabMenu>
+                    )}
                     <div className={styles.topicHead}>
                       <Avatar name={r.author_name} src={r.author_avatar} />
                       <div className={styles.cardMeta}>
                         <span className={styles.metaText}>{r.author_name}</span>
                         <span className={styles.metaSub}><Clock size={11} /> {fmt(r.created_at)}</span>
                       </div>
-                      {isOwner(r.author_id) && editingReply !== r.id && (
-                        <div className={styles.ownerActions}>
-                          <button onClick={() => { setEditingReply(r.id); setEditReplyText(r.content); }} aria-label="Editar"><Pencil size={14} /></button>
-                          <button onClick={() => delReply(r.id)} aria-label="Excluir"><Trash2 size={14} /></button>
-                        </div>
-                      )}
                     </div>
                     {editingReply === r.id ? (
                       <div className={styles.composer}>

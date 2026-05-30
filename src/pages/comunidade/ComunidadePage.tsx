@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useRef, useState, type FC } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import PublicLayout from '@/components/layout/PublicLayout';
-import { Search, Plus, X, Send, ImagePlus, Heart, MessageSquare, Clock, MessageCircle, Hash, Trophy } from 'lucide-react';
+import { Search, Plus, X, Send, ImagePlus, Heart, MessageSquare, Clock, MessageCircle, Hash, Trophy, Pencil, Trash2 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/useToast';
 import { communityService } from '@/services/community.service';
 import type { Category, Topic, ActiveMember } from '@/types/community.types';
+import KebabMenu from './KebabMenu';
 import styles from './ComunidadePage.module.css';
 
 const MAX_POST = 20000;
@@ -117,6 +118,17 @@ const ComunidadePage: FC = () => {
     } catch { toast.error('Erro ao curtir.'); }
   };
 
+  const isOwner = (authorId: number) => user?.id === authorId || user?.role === 'admin';
+
+  const removeTopic = async (id: number) => {
+    if (!confirm('Excluir este tópico?')) return;
+    try {
+      await communityService.deleteTopic(id);
+      setTopics((prev) => prev.filter((x) => x.id !== id));
+      toast.success('Tópico excluído.');
+    } catch { toast.error('Erro ao excluir.'); }
+  };
+
   const totalTopics = categories.reduce((s, c) => s + c.topic_count, 0);
 
   return (
@@ -226,17 +238,31 @@ const ComunidadePage: FC = () => {
               <div className={styles.list}>
                 {filtered.map((t) => (
                   <article key={t.id} className={styles.card}>
+                    {isOwner(t.author_id) && (
+                      <KebabMenu>
+                        <Link to={`/comunidade/${t.id}`} className={styles.kebabItem}>
+                          <Pencil size={14} /> Editar
+                        </Link>
+                        <button className={`${styles.kebabItem} ${styles.kebabDanger}`} onClick={() => removeTopic(t.id)}>
+                          <Trash2 size={14} /> Excluir
+                        </button>
+                      </KebabMenu>
+                    )}
                     <Link to={`/comunidade/${t.id}`} className={styles.cardLink}>
-                      <div className={styles.avatar}>
-                        {t.author_avatar ? <img src={t.author_avatar} alt="" /> : <span>{(t.author_name?.[0] ?? '?').toUpperCase()}</span>}
-                      </div>
-                      <div className={styles.cardBody}>
-                        <h3 className={styles.cardTitle}>{t.title}</h3>
-                        <div className={styles.cardMeta}>
-                          <span className={styles.catTag}>{t.category_name}</span>
-                          <span className={styles.metaText}>{t.author_name} · <Clock size={11} /> {fmt(t.created_at)}</span>
+                      <div className={styles.cardTop}>
+                        <div className={styles.avatar}>
+                          {t.author_avatar ? <img src={t.author_avatar} alt="" /> : <span>{(t.author_name?.[0] ?? '?').toUpperCase()}</span>}
+                        </div>
+                        <div className={styles.cardWho}>
+                          <span className={styles.author}>{t.author_name}</span>
+                          <span className={styles.metaSub}>
+                            <span className={styles.catTag}>{t.category_name}</span>
+                            <Clock size={11} /> {fmt(t.created_at)}
+                          </span>
                         </div>
                       </div>
+                      <h3 className={styles.cardTitle}>{t.title}</h3>
+                      <p className={styles.cardExcerpt}>{t.content}</p>
                     </Link>
                     <div className={styles.cardStats}>
                       <button className={`${styles.stat} ${t.liked ? styles.liked : ''}`} onClick={() => toggleLike(t)}>
