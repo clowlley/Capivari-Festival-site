@@ -1,15 +1,17 @@
 import { useState, type FC } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, ArrowLeft, LogIn } from 'lucide-react';
+import { Mail, Lock, User, ArrowLeft, UserPlus } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/useToast';
 import { authService } from '@/services/auth.service';
 import avatar from '@/assets/capiii.png';
 import styles from './Login.module.css';
 
-const Login: FC = () => {
+const Register: FC = () => {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirm, setConfirm] = useState('');
   const [loading, setLoading] = useState(false);
 
   const { login } = useAuth();
@@ -18,15 +20,23 @@ const Login: FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (password !== confirm) {
+      toast.error('As senhas não coincidem.');
+      return;
+    }
+    if (password.length < 6) {
+      toast.error('A senha deve ter no mínimo 6 caracteres.');
+      return;
+    }
     setLoading(true);
     try {
-      const { token, admin } = await authService.login({ email, password });
+      const { token, admin } = await authService.register({ name, email, password });
       login(token, admin);
-      toast.success('Login realizado com sucesso!');
-      navigate(admin.role === 'user' ? '/' : '/admin');
+      toast.success('Conta criada com sucesso!');
+      navigate('/conta');
     } catch (error) {
       const err = error as { response?: { data?: { error?: string } } };
-      toast.error(err.response?.data?.error || 'Erro ao realizar login. Tente novamente.');
+      toast.error(err.response?.data?.error || 'Erro ao criar conta. Tente novamente.');
     } finally {
       setLoading(false);
     }
@@ -51,13 +61,29 @@ const Login: FC = () => {
 
         <div className={styles.eyebrow}>
           <span className={styles.eyebrowLine} />
-          Acesso restrito
+          Criar conta
         </div>
 
         <h1 className={styles.title}>Capivari Festival</h1>
-        <p className={styles.subtitle}>Entre na sua conta para acessar o painel administrativo</p>
+        <p className={styles.subtitle}>Crie sua conta para participar da comunidade</p>
 
         <form onSubmit={handleSubmit} className={styles.form}>
+          <div className={styles.field}>
+            <label htmlFor="name">Nome</label>
+            <div className={styles.inputWrap}>
+              <User size={15} />
+              <input
+                type="text"
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                placeholder="Seu nome"
+                autoComplete="name"
+              />
+            </div>
+          </div>
+
           <div className={styles.field}>
             <label htmlFor="email">E-mail</label>
             <div className={styles.inputWrap}>
@@ -84,8 +110,24 @@ const Login: FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                placeholder="Mínimo 6 caracteres"
+                autoComplete="new-password"
+              />
+            </div>
+          </div>
+
+          <div className={styles.field}>
+            <label htmlFor="confirm">Confirmar senha</label>
+            <div className={styles.inputWrap}>
+              <Lock size={15} />
+              <input
+                type="password"
+                id="confirm"
+                value={confirm}
+                onChange={(e) => setConfirm(e.target.value)}
+                required
                 placeholder="••••••••"
-                autoComplete="current-password"
+                autoComplete="new-password"
               />
             </div>
           </div>
@@ -95,23 +137,19 @@ const Login: FC = () => {
               <span className={styles.spinner} />
             ) : (
               <>
-                <LogIn size={16} /> Entrar
+                <UserPlus size={16} /> Criar conta
               </>
             )}
           </button>
         </form>
 
-        <p className={styles.altAction}>
-          Não tem conta?{' '}
-          <Link to="/registro" className={styles.link}>Criar conta</Link>
-        </p>
-
         <p className={styles.footer}>
-          Capivari Festival · 4ª Edição · 2026
+          Já tem conta?{' '}
+          <Link to="/login" className={styles.link}>Entrar</Link>
         </p>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default Register;

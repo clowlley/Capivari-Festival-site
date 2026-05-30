@@ -321,6 +321,24 @@
   letter-spacing: 0.08em;
 }
 
+.link {
+  color: #b44fff;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.link:hover {
+  color: #ff4fa3;
+  text-decoration: underline;
+}
+
+.altAction {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+
 /* ══════════════════════════════════════════════════════════
    RESPONSIVE
 ══════════════════════════════════════════════════════════ */

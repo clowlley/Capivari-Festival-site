@@ -5,6 +5,8 @@ import 'react-toastify/dist/ReactToastify.css';
 
 // Importando componentes da nova estrutura (usando alias @)
 import Login from '@/pages/public/Login';
+import Register from '@/pages/public/Register';
+import AccountPage from '@/pages/account/AccountPage';
 import Home from '@/pages/home/home';
 import EventsListPage from '@/pages/events/EventsListPage';
 import EventDetailPage from '@/pages/events/EventDetailPage';
@@ -44,6 +46,15 @@ const App: React.FC = () => {
         {/* Rotas Públicas */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/registro" element={<Register />} />
+        <Route
+          path="/conta"
+          element={
+            <ProtectedRoute requireAdmin={false}>
+              <AccountPage />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/eventos" element={<EventsListPage />} />
         <Route path="/eventos/:id" element={<EventDetailPage />} />
         <Route path="/produtos" element={<ProductsListPage />} />
