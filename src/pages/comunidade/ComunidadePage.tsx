@@ -7,6 +7,7 @@ import { useToast } from '@/hooks/useToast';
 import { communityService } from '@/services/community.service';
 import type { Category, Topic, ActiveMember } from '@/types/community.types';
 import KebabMenu from './KebabMenu';
+import ClampText from './ClampText';
 import styles from './ComunidadePage.module.css';
 
 const MAX_POST = 20000;
@@ -262,8 +263,8 @@ const ComunidadePage: FC = () => {
                         </div>
                       </div>
                       <h3 className={styles.cardTitle}>{t.title}</h3>
-                      <p className={styles.cardExcerpt}>{t.content}</p>
                     </Link>
+                    <ClampText text={t.content} className={styles.cardExcerpt} />
                     <div className={styles.cardStats}>
                       <button className={`${styles.stat} ${t.liked ? styles.liked : ''}`} onClick={() => toggleLike(t)}>
                         <Heart size={15} fill={t.liked ? 'currentColor' : 'none'} /> {t.like_count}

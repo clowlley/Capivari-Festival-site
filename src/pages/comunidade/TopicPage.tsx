@@ -15,6 +15,7 @@ import type { Artist } from '@/types/artist.types';
 import type { Project } from '@/types/project.types';
 import type { Product } from '@/types/product.types';
 import KebabMenu from './KebabMenu';
+import ClampText from './ClampText';
 import styles from './ComunidadePage.module.css';
 
 const MAX_POST = 20000;
@@ -310,7 +311,7 @@ const TopicPage: FC = () => {
                       </div>
                     ) : (
                       <>
-                        <p className={styles.replyContent}>{r.content}</p>
+                        <ClampText text={r.content} className={styles.replyContent} />
                         {r.image_url && <Media url={r.image_url} />}
                         <button className={`${styles.stat} ${r.liked ? styles.liked : ''}`} onClick={() => likeReply(r)}>
                           <Heart size={14} fill={r.liked ? 'currentColor' : 'none'} /> {r.like_count}
