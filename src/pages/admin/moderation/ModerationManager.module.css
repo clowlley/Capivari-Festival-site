@@ -97,7 +97,38 @@
 .iconBtn:hover { background: rgba(255,255,255,0.06); color: #fff; }
 .iconDanger:hover { color: #ff6b6b; border-color: rgba(255,107,107,0.4); }
 
+/* ── Toolbar de seleção em massa ── */
+.modToolbar {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.toggleSel {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 9px 14px; border-radius: 9px;
+  border: 1px solid rgba(255,255,255,0.14); background: transparent;
+  color: rgba(255,255,255,0.75); font-family: inherit; font-size: 0.82rem; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+}
+.toggleSel:hover { background: rgba(255,255,255,0.06); color: #fff; }
+.toggleSelOn { border-color: rgba(180,79,255,0.5); background: rgba(180,79,255,0.14); color: #e3ccff; }
+
+.bulkBar {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  padding: 8px 12px; border-radius: 9px;
+  background: rgba(180,79,255,0.08); border: 1px solid rgba(180,79,255,0.2);
+}
+.selAll {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 0.82rem; color: rgba(255,255,255,0.8); cursor: pointer;
+}
+.selAll input, .cardCheck { width: 16px; height: 16px; accent-color: #b44fff; cursor: pointer; }
+.selCount { font-size: 0.78rem; color: rgba(255,255,255,0.5); }
+.bulkBar .approve, .bulkBar .reject { padding: 8px 14px; }
+
 .list { display: flex; flex-direction: column; gap: 16px; }
+
+.cardCheck { flex-shrink: 0; }
+.cardSelected { border-color: rgba(180,79,255,0.5); box-shadow: 0 0 0 1px rgba(180,79,255,0.3); }
 
 .card {
   background: rgba(13, 12, 26, 0.72);

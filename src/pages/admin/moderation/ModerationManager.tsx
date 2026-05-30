@@ -1,5 +1,5 @@
 import { useEffect, useState, type FC } from 'react';
-import { ShieldCheck, Check, X, Clock, Mail, Tag, Plus, Pencil, Trash2, Save } from 'lucide-react';
+import { ShieldCheck, Check, X, Clock, Mail, Tag, Plus, Pencil, Trash2, Save, ListChecks } from 'lucide-react';
 import { useToast } from '@/hooks/useToast';
 import { communityService } from '@/services/community.service';
 import type { PendingTopic, Category } from '@/types/community.types';
@@ -13,6 +13,11 @@ const ModerationManager: FC = () => {
   const [items, setItems] = useState<PendingTopic[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<number | null>(null);
+
+  // Seleção em massa
+  const [selectMode, setSelectMode] = useState(false);
+  const [selected, setSelected] = useState<Set<number>>(new Set());
+  const [bulkBusy, setBulkBusy] = useState(false);
 
   // Categorias
   const [categories, setCategories] = useState<Category[]>([]);
@@ -67,6 +72,44 @@ const ModerationManager: FC = () => {
       toast.success('Tópico rejeitado.');
     } catch { toast.error('Erro ao rejeitar.'); }
     finally { setBusy(null); }
+  };
+
+  // ── Seleção em massa ──
+  const toggleSelect = (id: number) =>
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  const allSelected = items.length > 0 && selected.size === items.length;
+  const toggleAll = () => setSelected(allSelected ? new Set() : new Set(items.map((i) => i.id)));
+  const exitSelect = () => { setSelectMode(false); setSelected(new Set()); };
+
+  const bulkApprove = async () => {
+    if (selected.size === 0) return;
+    setBulkBusy(true);
+    try {
+      const ids = [...selected];
+      const r = await communityService.bulkApprove(ids);
+      setItems((prev) => prev.filter((x) => !selected.has(x.id)));
+      setSelected(new Set());
+      toast.success(`${r.approved} tópico(s) aprovado(s).`);
+    } catch { toast.error('Erro ao aprovar em massa.'); }
+    finally { setBulkBusy(false); }
+  };
+
+  const bulkReject = async () => {
+    if (selected.size === 0) return;
+    if (!confirm(`Rejeitar e excluir ${selected.size} tópico(s)?`)) return;
+    setBulkBusy(true);
+    try {
+      const ids = [...selected];
+      const r = await communityService.bulkReject(ids);
+      setItems((prev) => prev.filter((x) => !selected.has(x.id)));
+      setSelected(new Set());
+      toast.success(`${r.rejected} tópico(s) rejeitado(s).`);
+    } catch { toast.error('Erro ao rejeitar em massa.'); }
+    finally { setBulkBusy(false); }
   };
 
   // ── Categorias ──
@@ -193,6 +236,34 @@ const ModerationManager: FC = () => {
 
       {/* ── Fila de moderação ── */}
       <h2 className={styles.panelTitle}><ShieldCheck size={16} /> Tópicos aguardando aprovação</h2>
+
+      {items.length > 0 && (
+        <div className={styles.modToolbar}>
+          <button
+            className={`${styles.toggleSel} ${selectMode ? styles.toggleSelOn : ''}`}
+            onClick={() => (selectMode ? exitSelect() : setSelectMode(true))}
+          >
+            <ListChecks size={15} /> {selectMode ? 'Sair da seleção' : 'Seleção em massa'}
+          </button>
+
+          {selectMode && (
+            <div className={styles.bulkBar}>
+              <label className={styles.selAll}>
+                <input type="checkbox" checked={allSelected} onChange={toggleAll} />
+                Selecionar todos
+              </label>
+              <span className={styles.selCount}>{selected.size} selecionado(s)</span>
+              <button className={styles.reject} disabled={bulkBusy || selected.size === 0} onClick={bulkReject}>
+                <X size={15} /> Rejeitar
+              </button>
+              <button className={styles.approve} disabled={bulkBusy || selected.size === 0} onClick={bulkApprove}>
+                <Check size={15} /> Aprovar
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
       {loading ? (
         <div className={styles.empty}>Carregando…</div>
       ) : items.length === 0 ? (
@@ -200,8 +271,17 @@ const ModerationManager: FC = () => {
       ) : (
         <div className={styles.list}>
           {items.map((t) => (
-            <article key={t.id} className={styles.card}>
+            <article key={t.id} className={`${styles.card} ${selectMode && selected.has(t.id) ? styles.cardSelected : ''}`}>
               <div className={styles.cardHead}>
+                {selectMode && (
+                  <input
+                    type="checkbox"
+                    className={styles.cardCheck}
+                    checked={selected.has(t.id)}
+                    onChange={() => toggleSelect(t.id)}
+                    aria-label="Selecionar tópico"
+                  />
+                )}
                 <div className={styles.avatar}>
                   {t.author_avatar ? <img src={t.author_avatar} alt="" /> : <span>{(t.author_name?.[0] ?? '?').toUpperCase()}</span>}
                 </div>

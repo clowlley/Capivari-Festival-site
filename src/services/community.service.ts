@@ -95,4 +95,14 @@ export const communityService = {
   async rejectTopic(id: number): Promise<void> {
     await api.post(`/community/moderation/topics/${id}/reject`);
   },
+
+  async bulkApprove(ids: number[]): Promise<{ approved: number }> {
+    const { data } = await api.post('/community/moderation/topics/bulk-approve', { ids });
+    return data;
+  },
+
+  async bulkReject(ids: number[]): Promise<{ rejected: number }> {
+    const { data } = await api.post('/community/moderation/topics/bulk-reject', { ids });
+    return data;
+  },
 };
