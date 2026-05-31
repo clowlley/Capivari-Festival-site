@@ -86,7 +86,7 @@ const ProfileSection: FC = () => {
 
       <section className={styles.card}>
         <form onSubmit={handleSubmit} className={styles.form}>
-          <div className={styles.field}>
+          <div className={`${styles.field} ${styles.span2}`}>
             <label>Capa do perfil</label>
             <div
               className={styles.coverBox}
@@ -156,7 +156,7 @@ const ProfileSection: FC = () => {
             </div>
           </div>
 
-          <div className={styles.field}>
+          <div className={`${styles.field} ${styles.span2}`}>
             <label htmlFor="bio">Bio</label>
             <div className={`${styles.inputWrap} ${styles.bioWrap}`}>
               <FileText size={15} />

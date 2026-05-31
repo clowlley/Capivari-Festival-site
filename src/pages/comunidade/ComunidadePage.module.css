@@ -600,7 +600,7 @@ textarea.input { resize: vertical; line-height: 1.55; }
   margin: 16px 0 0; font-size: 0.92rem; color: rgba(255,255,255,0.72);
   line-height: 1.6; white-space: pre-wrap; overflow-wrap: anywhere;
 }
-.profileStats { display: flex; gap: 26px; margin-top: 18px; flex-wrap: wrap; }
+.profileStats { display: flex; gap: 26px; margin-top: 18px; flex-wrap: nowrap; }
 .statBox { display: flex; flex-direction: column; }
 .statNum { font-size: 1.15rem; font-weight: 800; color: #fff; }
 .statLabel { font-size: 0.72rem; color: rgba(255,255,255,0.45); letter-spacing: 0.04em; }
