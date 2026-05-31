@@ -4,6 +4,7 @@ export interface User {
   name: string;
   role: 'admin' | 'user';
   avatar_url?: string | null;
+  cover_url?: string | null;
   bio?: string | null;
   created_at?: string;
 }

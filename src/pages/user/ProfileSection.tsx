@@ -1,6 +1,6 @@
 import { useRef, useState, type FC } from 'react';
 import { Link } from 'react-router-dom';
-import { Camera, Mail, User, Lock, Save, FileText, ExternalLink } from 'lucide-react';
+import { Camera, Mail, User, Lock, Save, FileText, ExternalLink, Image } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/useToast';
 import { authService } from '@/services/auth.service';
@@ -10,6 +10,7 @@ const ProfileSection: FC = () => {
   const { user, updateUser } = useAuth();
   const toast = useToast();
   const fileInput = useRef<HTMLInputElement>(null);
+  const coverInput = useRef<HTMLInputElement>(null);
 
   const [name, setName] = useState(user?.name ?? '');
   const [email, setEmail] = useState(user?.email ?? '');
@@ -18,9 +19,12 @@ const ProfileSection: FC = () => {
   const [newPassword, setNewPassword] = useState('');
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const avatarSrc = preview || user?.avatar_url || null;
+  const coverSrc = coverPreview || user?.cover_url || null;
   const initial = (user?.name?.[0] ?? '?').toUpperCase();
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,6 +32,13 @@ const ProfileSection: FC = () => {
     if (!file) return;
     setAvatarFile(file);
     setPreview(URL.createObjectURL(file));
+  };
+
+  const handleCover = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setCoverFile(file);
+    setCoverPreview(URL.createObjectURL(file));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -47,6 +58,7 @@ const ProfileSection: FC = () => {
         form.append('newPassword', newPassword);
       }
       if (avatarFile) form.append('avatar', avatarFile);
+      if (coverFile) form.append('cover', coverFile);
 
       const updated = await authService.updateProfile(form);
       updateUser(updated);
@@ -54,6 +66,8 @@ const ProfileSection: FC = () => {
       setNewPassword('');
       setAvatarFile(null);
       setPreview(null);
+      setCoverFile(null);
+      setCoverPreview(null);
       toast.success('Perfil atualizado com sucesso!');
     } catch (error) {
       const err = error as { response?: { data?: { error?: string } } };
@@ -72,6 +86,23 @@ const ProfileSection: FC = () => {
 
       <section className={styles.card}>
         <form onSubmit={handleSubmit} className={styles.form}>
+          <div className={styles.field}>
+            <label>Capa do perfil</label>
+            <div
+              className={styles.coverBox}
+              style={coverSrc ? { backgroundImage: `url(${coverSrc})` } : undefined}
+              onClick={() => coverInput.current?.click()}
+              role="button"
+              tabIndex={0}
+            >
+              <div className={styles.coverOverlay}>
+                <Image size={18} />
+                <span>{coverSrc ? 'Alterar capa' : 'Adicionar capa'}</span>
+              </div>
+            </div>
+            <input ref={coverInput} type="file" accept="image/*" onChange={handleCover} hidden />
+          </div>
+
           <div className={styles.avatarRow}>
             <div className={styles.avatarWrap}>
               {avatarSrc ? (

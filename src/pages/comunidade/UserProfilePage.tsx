@@ -91,6 +91,10 @@ const UserProfilePage: FC = () => {
             <div className={styles.empty}>Carregando…</div>
           ) : !profile ? null : (
             <>
+              <div
+                className={styles.profileBanner}
+                style={profile.cover_url ? { backgroundImage: `url(${profile.cover_url})` } : undefined}
+              >
               <section className={styles.profileCard}>
                 <div className={styles.profileMain}>
                   <div className={styles.profileHead}>
@@ -157,6 +161,7 @@ const UserProfilePage: FC = () => {
                   </div>
                 </div>
               </section>
+              </div>
 
               <h2 className={styles.profileSectionTitle}>Tópicos de {profile.name} ({profile.topic_count})</h2>
 

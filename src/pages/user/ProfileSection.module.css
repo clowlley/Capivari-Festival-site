@@ -46,6 +46,38 @@
   text-align: left;
 }
 
+/* Capa */
+.coverBox {
+  position: relative;
+  height: 140px;
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+  background-color: #1a1326;
+  background-image: linear-gradient(135deg, #b44fff 0%, #ff4fa3 100%);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: border-color 0.2s;
+}
+.coverBox:hover { border-color: rgba(180, 79, 255, 0.5); }
+.coverOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(13, 12, 26, 0.4);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.coverBox:hover .coverOverlay { opacity: 1; }
+
 /* Avatar */
 .avatarRow {
   display: flex;

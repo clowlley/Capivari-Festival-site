@@ -2,6 +2,7 @@ export interface UserProfile {
   id: number;
   name: string;
   avatar_url: string | null;
+  cover_url: string | null;
   bio: string | null;
   role: 'admin' | 'user';
   created_at: string;
